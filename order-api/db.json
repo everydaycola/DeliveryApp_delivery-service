@@ -1,0 +1,76 @@
+{
+  "couriers": [
+    {
+      "id": {
+        "id": "550e8400-e29b-41d4-a716-446655440001"
+      },
+      "currentOrderId": null
+    },
+    {
+      "id": {
+        "id": "550e8400-e29b-41d4-a716-446655440002"
+      },
+      "currentOrderId": {
+        "id": "660e8400-e29b-41d4-a716-446655440001"
+      }
+    }
+  ],
+  "deliveries": [
+    {
+      "id": {
+        "id": "770e8400-e29b-41d4-a716-446655440001"
+      },
+      "orderId": {
+        "id": "660e8400-e29b-41d4-a716-446655440002"
+      },
+      "courierId": {
+        "id": "550e8400-e29b-41d4-a716-446655440002"
+      },
+      "isSuccessful": true,
+      "deliveryTime": 1800000,
+      "payout": 12.50
+    },
+    {
+      "id": {
+        "id": "770e8400-e29b-41d4-a716-446655440002"
+      },
+      "orderId": {
+        "id": "660e8400-e29b-41d4-a716-446655440003"
+      },
+      "courierId": {
+        "id": "550e8400-e29b-41d4-a716-446655440002"
+      },
+      "isSuccessful": true,
+      "deliveryTime": 2100000,
+      "payout": 15.75
+    },
+    {
+      "id": {
+        "id": "770e8400-e29b-41d4-a716-446655440003"
+      },
+      "orderId": {
+        "id": "660e8400-e29b-41d4-a716-446655440004"
+      },
+      "courierId": {
+        "id": "550e8400-e29b-41d4-a716-446655440001"
+      },
+      "isSuccessful": true,
+      "deliveryTime": 1650000,
+      "payout": 11.25
+    },
+    {
+      "id": {
+        "id": "770e8400-e29b-41d4-a716-446655440004"
+      },
+      "orderId": {
+        "id": "660e8400-e29b-41d4-a716-446655440001"
+      },
+      "courierId": {
+        "id": "550e8400-e29b-41d4-a716-446655440002"
+      },
+      "isSuccessful": false,
+      "deliveryTime": 0,
+      "payout": 0.0
+    }
+  ]
+}
