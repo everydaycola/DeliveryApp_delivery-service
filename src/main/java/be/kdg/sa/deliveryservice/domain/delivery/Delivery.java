@@ -4,13 +4,15 @@ import be.kdg.sa.deliveryservice.domain.courier.CourierId;
 import be.kdg.sa.deliveryservice.domain.order.OrderId;
 import org.jmolecules.ddd.annotation.Entity;
 
-@Entity
-public class Delivery {
+import java.time.LocalDateTime;
+
+@Entity public class Delivery {
     private final DeliveryId id;
     private final OrderId orderId;
     private CourierId courierId;
     private boolean isSuccessful;
-    private long deliveryTime;
+    private LocalDateTime startTime;
+    private LocalDateTime endTime;
     private double payout;
 
     public Delivery(DeliveryId id, OrderId orderId) {
@@ -25,5 +27,21 @@ public class Delivery {
 
     public void setCourierId(CourierId courierId) {
         this.courierId = courierId;
+    }
+
+    public void setEndTime(LocalDateTime endTime) {
+        this.endTime = endTime;
+    }
+
+    public void setStartTime(LocalDateTime startTime) {
+        this.startTime = startTime;
+    }
+
+    public DeliveryId getId() {
+        return id;
+    }
+
+    public OrderId getOrderId() {
+        return orderId;
     }
 }
