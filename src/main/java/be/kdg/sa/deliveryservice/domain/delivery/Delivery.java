@@ -10,10 +10,10 @@ import java.time.LocalDateTime;
     private final DeliveryId id;
     private final OrderId orderId;
     private CourierId courierId;
-    private boolean isSuccessful;
-    private LocalDateTime startTime;
-    private LocalDateTime endTime;
-    private double payout;
+//    private boolean isSuccessful;
+//    private LocalDateTime startTime;
+//    private LocalDateTime endTime;
+//    private double payout;
 
     public Delivery(DeliveryId id, OrderId orderId) {
         this.id = id;
