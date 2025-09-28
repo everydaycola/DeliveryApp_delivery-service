@@ -1,14 +1,13 @@
 package be.kdg.sa.deliveryservice.api;
 
 import be.kdg.sa.deliveryservice.application.DeliveryService;
+import be.kdg.sa.deliveryservice.domain.courier.Courier;
 import be.kdg.sa.deliveryservice.domain.courier.CourierId;
 import be.kdg.sa.deliveryservice.domain.delivery.Delivery;
+import be.kdg.sa.deliveryservice.infrastructure.DataSeeder;
 import org.jspecify.annotations.Nullable;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.UUID;
@@ -16,7 +15,7 @@ import java.util.UUID;
 @RestController
 @RequestMapping("/api/deliveries")
 public class DeliveryController {
-    private static final CourierId courierId = new CourierId(UUID.fromString("550e8400-e29b-41d4-a716-446655440001"));
+    private static final CourierId courierId = new CourierId(DataSeeder.Courier1Id);
     private final DeliveryService deliveries;
 
     public DeliveryController(DeliveryService deliveries) {
@@ -24,15 +23,15 @@ public class DeliveryController {
     }
 
     @GetMapping
-    public ResponseEntity <List <DeliveryDto>> findAll(
-//            @RequestParam(name = "onlyAvailable") boolean onlyAvailable
-    ) {
+    public ResponseEntity <List <DeliveryDto>> findAll() {
         List <Delivery> deliveries = this.deliveries.findAll();
 
-        List<DeliveryDto> deliveryDtos = deliveries.stream()
+        List <DeliveryDto> deliveryDtos = deliveries.stream()
                                          .map(DeliveryDto::from)
                                          .toList();
 
         return ResponseEntity.ok(deliveryDtos);
     }
+
+
 }

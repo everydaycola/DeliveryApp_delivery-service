@@ -1,5 +1,7 @@
 package be.kdg.sa.deliveryservice.application;
 
+import be.kdg.sa.deliveryservice.domain.courier.Courier;
+import be.kdg.sa.deliveryservice.domain.courier.CourierId;
 import be.kdg.sa.deliveryservice.domain.delivery.Delivery;
 import be.kdg.sa.deliveryservice.domain.delivery.DeliveryRepository;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -22,8 +24,8 @@ public class DeliveryService {
         return deliveries.getDeliveries();
     }
 
-    public List<Delivery> findAllOpen() {
-        return deliveries.getOpenDeliveries();
+    public Courier findCourierById(final CourierId courierId) {
+        return deliveries.findCourierById(courierId)
+                     .orElseThrow(courierId::notFound);
     }
-
 }

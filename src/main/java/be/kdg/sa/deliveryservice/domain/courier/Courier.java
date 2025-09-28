@@ -17,6 +17,10 @@ public class Courier {
         return currentOrderId;
     }
 
+    public CourierId getId() {
+        return id;
+    }
+
     public void setOrderId(OrderId orderId) {
         this.currentOrderId = orderId;
     }
