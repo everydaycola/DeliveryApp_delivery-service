@@ -2,6 +2,7 @@ package be.kdg.sa.deliveryservice.application;
 
 import be.kdg.sa.deliveryservice.domain.delivery.Delivery;
 import be.kdg.sa.deliveryservice.domain.delivery.DeliveryRepository;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -13,7 +14,7 @@ public class DeliveryService {
 
     private final DeliveryRepository deliveries;
 
-    public DeliveryService(DeliveryRepository deliveries) {
+    public DeliveryService(@Qualifier("dbDeliveryInMemory") DeliveryRepository deliveries) {
         this.deliveries = deliveries;
     }
 

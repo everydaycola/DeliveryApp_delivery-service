@@ -18,7 +18,7 @@ import java.time.LocalDateTime;
     public Delivery(DeliveryId id, OrderId orderId) {
         this.id = id;
         this.orderId = orderId;
-        this.isSuccessful = false;
+//        this.isSuccessful = false;
     }
 
     public CourierId getCourierId() {
@@ -29,13 +29,13 @@ import java.time.LocalDateTime;
         this.courierId = courierId;
     }
 
-    public void setEndTime(LocalDateTime endTime) {
-        this.endTime = endTime;
-    }
+//    public void setEndTime(LocalDateTime endTime) {
+//        this.endTime = endTime;
+//    }
 
-    public void setStartTime(LocalDateTime startTime) {
-        this.startTime = startTime;
-    }
+//    public void setStartTime(LocalDateTime startTime) {
+//        this.startTime = startTime;
+//    }
 
     public DeliveryId getId() {
         return id;

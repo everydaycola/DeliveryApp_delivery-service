@@ -25,14 +25,9 @@ public class DeliveryController {
 
     @GetMapping
     public ResponseEntity <List <DeliveryDto>> findAll(
-            @RequestParam(name = "onlyAvailable") boolean onlyAvailable
+//            @RequestParam(name = "onlyAvailable") boolean onlyAvailable
     ) {
-        List <Delivery> deliveries;
-        if (onlyAvailable) {
-            deliveries = this.deliveries.findAllOpen();
-        } else {
-            deliveries = this.deliveries.findAll();
-        }
+        List <Delivery> deliveries = this.deliveries.findAll();
 
         List<DeliveryDto> deliveryDtos = deliveries.stream()
                                          .map(DeliveryDto::from)
