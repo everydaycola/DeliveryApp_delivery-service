@@ -10,6 +10,7 @@ import java.util.Optional;
 @Repository
 public interface DeliveryRepository {
     List <Delivery> getDeliveries();
-    List<Delivery> getOpenDeliveries();
+    void save(Delivery delivery);
     Optional <Courier> findCourierById(final CourierId CourierId);
+    Optional <Delivery> findById(final DeliveryId deliveryId);
 }

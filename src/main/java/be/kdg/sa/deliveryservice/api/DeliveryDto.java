@@ -18,7 +18,7 @@ public record DeliveryDto(
         return new DeliveryDto(
                 delivery.getId().id(),
                 delivery.getOrderId().id(),
-                delivery.getCourierId().id(),
+                delivery.getCourierId() == null ? null : delivery.getCourierId().id(),
                 delivery.isSuccessful(),
                 delivery.getStartTime(),
                 delivery.getEndTime(),

@@ -15,14 +15,20 @@ public class DataSeeder {
 
     public final static UUID Courier1Id = UUID.fromString("550e8400-e29b-41d4-a716-446655440001");
     public final static UUID Courier2Id = UUID.fromString("550e8400-e29b-41d4-a716-446655440002");
+
     public final static UUID Order1Id = UUID.fromString("660e8400-e29b-41d4-a716-446655440001");
     public final static UUID Order2Id = UUID.fromString("660e8400-e29b-41d4-a716-446655440002");
     public final static UUID Order3Id = UUID.fromString("660e8400-e29b-41d4-a716-446655440003");
     public final static UUID Order4Id = UUID.fromString("660e8400-e29b-41d4-a716-446655440004");
+    public final static UUID Order5Id = UUID.fromString("660e8400-e29b-41d4-a716-446655440005");
+    public final static UUID Order6Id = UUID.fromString("660e8400-e29b-41d4-a716-446655440006");
+
     public final static UUID Delivery1Id = UUID.fromString("770e8400-e29b-41d4-a716-446655440001");
     public final static UUID Delivery2Id = UUID.fromString("770e8400-e29b-41d4-a716-446655440002");
     public final static UUID Delivery3Id = UUID.fromString("770e8400-e29b-41d4-a716-446655440003");
     public final static UUID Delivery4Id = UUID.fromString("770e8400-e29b-41d4-a716-446655440004");
+    public final static UUID Delivery5Id = UUID.fromString("770e8400-e29b-41d4-a716-446655440005");
+    public final static UUID Delivery6Id = UUID.fromString("770e8400-e29b-41d4-a716-446655440006");
 
 
     public static List<Delivery> seedDeliveries() {
@@ -44,15 +50,21 @@ public class DataSeeder {
         // Create delivery 4 - active delivery by courier 2 (not successful yet)
         deliveries.add(createDelivery(courierId2, Delivery4Id, Order4Id));
 
+        // Create delivery 5 0- unclaimed delivery
+        deliveries.add(createDelivery(null, Delivery5Id, Order5Id));
+
+        // Create delivery 6 0- unclaimed delivery
+        deliveries.add(createDelivery(null, Delivery6Id, Order6Id));
+
         return deliveries;
     }
 
-    private static Delivery createDelivery(CourierId courierId2, UUID deliveryId, UUID orderId) {
+    private static Delivery createDelivery(CourierId courierId, UUID deliveryId, UUID orderId) {
         Delivery delivery1 = new Delivery(
                 new DeliveryId(deliveryId),
                 new OrderId(orderId)
         );
-        delivery1.setCourierId(courierId2);
+        delivery1.setCourierId(courierId);
         return delivery1;
     }
 
@@ -66,7 +78,7 @@ public class DataSeeder {
 
         // Courier 2 - has active delivery
         Courier courier2 = new Courier(new CourierId(Courier2Id));
-        courier2.setOrderId(new OrderId(Order4Id));
+        courier2.claim(new DeliveryId(Delivery4Id));
         couriers.add(courier2);
 
         return couriers;

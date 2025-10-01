@@ -9,16 +9,9 @@ public record CourierDto(UUID id,
                          UUID orderId){
     public static CourierDto from(final Courier courier) {
 
-        OrderId OrderId = courier.getOrderId();
-        UUID OrderUUID;
-
-        if  (OrderId == null) {
-            OrderUUID = UUID.fromString("00000000-0000-0000-0000-000000000000");
-        } else {
-            OrderUUID = OrderId.id();
-        }
-
-        return new CourierDto(courier.getId().id(),
-                              OrderUUID);
+        return new CourierDto(
+                courier.getId().id(),
+                courier.getOrderId() == null ? null : courier.getOrderId().id()
+        );
     }
 }

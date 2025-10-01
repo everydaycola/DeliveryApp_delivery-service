@@ -37,6 +37,14 @@ import java.time.LocalDateTime;
 //        this.startTime = startTime;
 //    }
 
+    public void claim(CourierId courierId) {
+        if (this.courierId != null) {
+            throw new IllegalStateException("Delivery is already claimed");
+        }
+        this.courierId = courierId;
+        this.startTime = LocalDateTime.now();
+    }
+
     public DeliveryId getId() {
         return id;
     }
