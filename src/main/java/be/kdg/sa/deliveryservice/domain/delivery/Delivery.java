@@ -10,15 +10,15 @@ import java.time.LocalDateTime;
     private final DeliveryId id;
     private final OrderId orderId;
     private CourierId courierId;
-//    private boolean isSuccessful;
-//    private LocalDateTime startTime;
-//    private LocalDateTime endTime;
-//    private double payout;
+    private boolean isSuccessful;
+    private LocalDateTime startTime;
+    private LocalDateTime endTime;
+    private double payout;
 
     public Delivery(DeliveryId id, OrderId orderId) {
         this.id = id;
         this.orderId = orderId;
-//        this.isSuccessful = false;
+        this.isSuccessful = false;
     }
 
     public CourierId getCourierId() {
@@ -43,5 +43,21 @@ import java.time.LocalDateTime;
 
     public OrderId getOrderId() {
         return orderId;
+    }
+
+    public boolean isSuccessful() {
+        return isSuccessful;
+    }
+
+    public LocalDateTime getStartTime() {
+        return startTime;
+    }
+
+    public LocalDateTime getEndTime() {
+        return endTime;
+    }
+
+    public double getPayout() {
+        return payout;
     }
 }
