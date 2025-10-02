@@ -1,12 +1,16 @@
 package be.kdg.sa.deliveryservice.domain.courier;
 
+import be.kdg.sa.deliveryservice.domain.delivery.Delivery;
 import be.kdg.sa.deliveryservice.domain.delivery.DeliveryId;
 import org.jmolecules.ddd.annotation.Entity;
+
+import java.util.List;
 
 @Entity
 public class Courier {
     private final CourierId id;
-    private DeliveryId currentDeliveryId;
+    private DeliveryId currentDelivery;
+    private List <DeliveryId> pastDeliveries;
     // some field to link it to the identity class
 
     public Courier(CourierId id) {
@@ -14,11 +18,11 @@ public class Courier {
     }
 
     public Boolean HasOrder() {
-        return currentDeliveryId != null;
+        return currentDelivery != null;
     }
 
     public DeliveryId getOrderId() {
-        return currentDeliveryId;
+        return currentDelivery;
     }
 
     public CourierId getId() {
@@ -26,10 +30,10 @@ public class Courier {
     }
 
     public void setOrderId(DeliveryId deliveryId) {
-        this.currentDeliveryId = deliveryId;
+        this.currentDelivery = deliveryId;
     }
 
     public void claim(DeliveryId deliveryId) {
-        this.currentDeliveryId = deliveryId;
+        this.currentDelivery = deliveryId;
     }
 }

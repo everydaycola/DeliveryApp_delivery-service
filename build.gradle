@@ -29,6 +29,7 @@ dependencies {
 	implementation 'org.jmolecules.integrations:jmolecules-starter-ddd:0.29.0'
 	testImplementation 'org.jmolecules.integrations:jmolecules-starter-test:0.29.0'
 	implementation("org.jspecify:jspecify:1.0.0")
+	runtimeOnly 'org.postgresql:postgresql'
 
 }
 

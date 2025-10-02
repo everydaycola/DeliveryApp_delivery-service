@@ -36,7 +36,7 @@ public class DeliveryService {
         if (courier.HasOrder()) {
             throw new IllegalStateException("You already have an order.");
         }
-        delivery.claim(courierId);
+        delivery.claimNow(courierId);
         courier.claim(deliveryId);
         deliveries.save(delivery);
         return delivery;

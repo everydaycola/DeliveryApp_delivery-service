@@ -29,20 +29,42 @@ import java.time.LocalDateTime;
         this.courierId = courierId;
     }
 
-//    public void setEndTime(LocalDateTime endTime) {
-//        this.endTime = endTime;
-//    }
+    public void setEndTime(LocalDateTime endTime) {
+        this.endTime = endTime;
+    }
 
-//    public void setStartTime(LocalDateTime startTime) {
-//        this.startTime = startTime;
-//    }
+    public void setStartTime(LocalDateTime startTime) {
+        this.startTime = startTime;
+    }
 
-    public void claim(CourierId courierId) {
+    public void claimNow(CourierId courierId) {
+        claimAt(courierId, LocalDateTime.now());
+    }
+
+    public void claimAt(CourierId courierId, LocalDateTime startTime) {
         if (this.courierId != null) {
             throw new IllegalStateException("Delivery is already claimed");
         }
         this.courierId = courierId;
-        this.startTime = LocalDateTime.now();
+        this.startTime = startTime;
+    }
+
+    public void finishNow() {
+        finishAt(LocalDateTime.now());
+    }
+
+    public void finishAt(LocalDateTime endTime) {
+        if (this.courierId == null) {
+            throw new IllegalStateException("Delivery is not claimed");
+        }
+        if (this.startTime == null) {
+            throw new IllegalStateException("Delivery has not started yet");
+        }
+        if (this.endTime != null || this.isSuccessful) {
+            throw new IllegalStateException("Delivery has not started yet");
+        }
+        this.endTime = endTime;
+        this.isSuccessful = true;
     }
 
     public DeliveryId getId() {
