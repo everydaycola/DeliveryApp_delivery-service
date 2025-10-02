@@ -1,4 +1,4 @@
-package be.kdg.sa.deliveryservice.infrastructure.jpa.courier;
+package be.kdg.sa.deliveryservice.infrastructure.courier.jpa;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 

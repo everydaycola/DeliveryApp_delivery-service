@@ -1,11 +1,11 @@
-package be.kdg.sa.deliveryservice.infrastructure.jpa.delivery;
+package be.kdg.sa.deliveryservice.infrastructure.delivery.jpa;
 
 import be.kdg.sa.deliveryservice.domain.courier.CourierId;
 import be.kdg.sa.deliveryservice.domain.delivery.Delivery;
 import be.kdg.sa.deliveryservice.domain.delivery.DeliveryId;
 import be.kdg.sa.deliveryservice.domain.order.OrderId;
-import be.kdg.sa.deliveryservice.infrastructure.jpa.courier.JpaCourierEntity;
-import be.kdg.sa.deliveryservice.infrastructure.jpa.courier.JpaCourierRepository;
+import be.kdg.sa.deliveryservice.infrastructure.courier.jpa.JpaCourierEntity;
+import be.kdg.sa.deliveryservice.infrastructure.courier.jpa.JpaCourierRepository;
 import jakarta.persistence.*;
 
 import java.time.LocalDateTime;
@@ -35,7 +35,7 @@ public class JpaDeliveryEntity {
     @Column()
     private LocalDateTime endTime;
 
-    @Column()
+    @Column(nullable = false)
     private double payout;
 
     protected JpaDeliveryEntity() {} // for JPA
@@ -43,6 +43,10 @@ public class JpaDeliveryEntity {
     public JpaDeliveryEntity(UUID id, UUID orderId) {
         this.id = id;
         this.orderId = orderId;
+    }
+
+    public UUID getId() {
+        return id;
     }
 
     public static JpaDeliveryEntity fromDomain(Delivery delivery, JpaCourierRepository courierRepository) {
@@ -65,19 +69,19 @@ public class JpaDeliveryEntity {
         return jpaDeliveryEntity;
     }
 
-    public static Delivery toDomain(JpaDeliveryEntity jpaDeliveryEntity) {
+    public Delivery toDomain() {
         Delivery delivery = new Delivery(
-                new DeliveryId(jpaDeliveryEntity.id),
-                new OrderId(jpaDeliveryEntity.orderId)
+                new DeliveryId(this.id),
+                new OrderId(this.orderId)
         );
-        if (jpaDeliveryEntity.courier == null) {
+        if (this.courier == null) {
             return delivery;
         }
-        delivery.claimAt(new CourierId(jpaDeliveryEntity.courier.getId()), jpaDeliveryEntity.startTime);
-        if (!jpaDeliveryEntity.isSuccessful) {
+        delivery.claimAt(new CourierId(this.courier.getId()), this.startTime);
+        if (!this.isSuccessful) {
             return delivery;
         }
-        delivery.finishAt(jpaDeliveryEntity.endTime);
+        delivery.finishAt(this.endTime);
         return delivery;
     }
 
