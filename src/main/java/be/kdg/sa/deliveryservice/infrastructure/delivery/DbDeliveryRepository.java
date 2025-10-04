@@ -1,5 +1,7 @@
 package be.kdg.sa.deliveryservice.infrastructure.delivery;
 
+import be.kdg.sa.deliveryservice.domain.NotFoundException;
+import be.kdg.sa.deliveryservice.domain.courier.CourierId;
 import be.kdg.sa.deliveryservice.domain.delivery.Delivery;
 import be.kdg.sa.deliveryservice.domain.delivery.DeliveryId;
 import be.kdg.sa.deliveryservice.domain.delivery.DeliveryRepository;
@@ -10,7 +12,6 @@ import org.springframework.stereotype.Repository;
 
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Stream;
 
 @Repository
 public class DbDeliveryRepository implements DeliveryRepository {
@@ -35,6 +36,14 @@ public class DbDeliveryRepository implements DeliveryRepository {
     public Optional<Delivery> findById(DeliveryId deliveryId) {
         return this.jpaDeliveryRepository.findById(deliveryId.id())
                 .map(JpaDeliveryEntity::toDomain);
+    }
+
+    @Override public List<Delivery> findDeliveriesFor(CourierId courierId) {
+        return this.jpaDeliveryRepository.findAllByCourierIdAndIsSuccessfulTrue(courierId.id())
+                                         .orElse(List.of())
+                                         .stream()
+                                         .map(JpaDeliveryEntity::toDomain)
+                                         .toList();
     }
 
     @Override

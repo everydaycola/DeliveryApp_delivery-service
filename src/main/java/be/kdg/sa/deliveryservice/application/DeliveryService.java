@@ -44,4 +44,9 @@ public class DeliveryService {
         couriers.save(courier);
         return delivery;
     }
+
+    public List<Delivery> findCompletedDeliveries(CourierId courierId) {
+        List<Delivery> deliveryList = deliveries.findDeliveriesFor(courierId);
+        return deliveryList;
+    }
 }

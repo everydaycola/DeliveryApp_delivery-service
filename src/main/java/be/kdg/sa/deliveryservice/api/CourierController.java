@@ -11,14 +11,12 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.List;
 import java.util.UUID;
 
 @RestController
 @RequestMapping("/api/couriers")
 public class CourierController {
-    private static final CourierId courierId = new CourierId(DataSeeder.Courier1Id);
-//    private static final CourierId courierId = new CourierId(DataSeeder.Courier2Id);
-
     private final DeliveryService deliveries;
 
     public CourierController(DeliveryService deliveries) {
@@ -27,10 +25,12 @@ public class CourierController {
 
     @GetMapping("/{id}")
     public ResponseEntity <CourierDto> findById(@PathVariable final UUID id) {
-        final CourierId courierId = new CourierId(id);
-        final Courier courier = deliveries.findCourierById(courierId);
+        return ResponseEntity.ok(CourierDto.from(deliveries.findCourierById(new CourierId(id))));
+    }
 
-        return ResponseEntity.ok(CourierDto.from(courier));
+    @GetMapping("/{id}/completed")
+    public ResponseEntity<List<DeliveryDto>> getCompletedDeliveries(@PathVariable final UUID id) {
+        return ResponseEntity.ok(deliveries.findCompletedDeliveries(new CourierId(id)).stream().map(DeliveryDto::from).toList());
     }
 
 }
