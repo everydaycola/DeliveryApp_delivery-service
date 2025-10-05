@@ -30,4 +30,4 @@ POST http://localhost:8082/api/deliveries/{{delivery5}}/claim/{{courier1}}
 POST http://localhost:8082/api/deliveries/{{delivery6}}/claim/{{courier1}}
 
 ### POST request to claim an already claimed order
-POST http://localhost:8082/api/deliveries/{{delivery1}}/claim
+POST http://localhost:8082/api/deliveries/{{delivery1}}/claim/{{courier1}}
