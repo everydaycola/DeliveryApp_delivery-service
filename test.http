@@ -1,23 +1,33 @@
+@courier1=550e8400-e29b-41d4-a716-446655440001
+@courier2=550e8400-e29b-41d4-a716-446655440002
+@delivery1=770e8400-e29b-41d4-a716-446655440001
+@delivery2=770e8400-e29b-41d4-a716-446655440002
+@delivery3=770e8400-e29b-41d4-a716-446655440003
+@delivery4=770e8400-e29b-41d4-a716-446655440004
+@delivery5=770e8400-e29b-41d4-a716-446655440005
+@delivery6=770e8400-e29b-41d4-a716-446655440006
+
+
 ### GET request for all deliveries
 GET http://localhost:8082/api/deliveries
 
 ### GET request for courier 1
-GET http://localhost:8082/api/couriers/550e8400-e29b-41d4-a716-446655440001
+GET http://localhost:8082/api/couriers/{{courier1}}
 
 ### GET request for courier 2
-GET http://localhost:8082/api/couriers/550e8400-e29b-41d4-a716-446655440002
+GET http://localhost:8082/api/couriers/{{courier2}}
 
 ### GET request for courier 1 past orders
-GET http://localhost:8082/api/couriers/550e8400-e29b-41d4-a716-446655440001/completed
+GET http://localhost:8082/api/couriers/{{courier1}}/completed
 
 ### GET request for courier 2 past orders
-GET http://localhost:8082/api/couriers/550e8400-e29b-41d4-a716-446655440002/completed
+GET http://localhost:8082/api/couriers/{{courier2}}/completed
 
-### POST request to claim order as courier (Uses your session id hardcoded in delivery controller)
-POST http://localhost:8082/api/deliveries/770e8400-e29b-41d4-a716-446655440005/claim
+### POST request to claim order as courier
+POST http://localhost:8082/api/deliveries/{{delivery5}}/claim/{{courier1}}
 
 ### POST request to claim order as courier (Use it to try and claim an order when you already have one)
-POST http://localhost:8082/api/deliveries/770e8400-e29b-41d4-a716-446655440006/claim
+POST http://localhost:8082/api/deliveries/{{delivery6}}/claim/{{courier1}}
 
 ### POST request to claim an already claimed order
-POST http://localhost:8082/api/deliveries/770e8400-e29b-41d4-a716-446655440001/claim
+POST http://localhost:8082/api/deliveries/{{delivery1}}/claim

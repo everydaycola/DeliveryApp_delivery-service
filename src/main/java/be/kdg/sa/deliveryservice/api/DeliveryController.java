@@ -16,7 +16,6 @@ import java.util.UUID;
 @RestController
 @RequestMapping("/api/deliveries")
 public class DeliveryController {
-    private static final CourierId courierId = new CourierId(DataSeeder.Courier1Id);
     private final DeliveryService deliveries;
 
     public DeliveryController(DeliveryService deliveries) {
@@ -25,18 +24,20 @@ public class DeliveryController {
 
     @GetMapping
     public ResponseEntity <List <DeliveryDto>> findAll() {
-        List <Delivery> deliveries = this.deliveries.findAll();
+        List <Delivery> foundDeliveries = this.deliveries.findAll();
 
-        List <DeliveryDto> deliveryDtos = deliveries.stream()
+        List <DeliveryDto> deliveryDtos = foundDeliveries.stream()
                                          .map(DeliveryDto::from)
                                          .toList();
 
         return ResponseEntity.ok(deliveryDtos);
     }
 
-    @PostMapping("/{id}/claim")
-    public ResponseEntity<DeliveryDto> confirm(@PathVariable("id") final UUID id) {
-        final DeliveryId deliveryId = new DeliveryId(id);
+    @PostMapping("/{deliveryId}/claim/{courierId}")
+    public ResponseEntity<DeliveryDto> confirm(@PathVariable("deliveryId") final UUID deliveryUUID,
+                                               @PathVariable("courierId") final UUID courierUUID) {
+        final DeliveryId deliveryId = new DeliveryId(deliveryUUID);
+        final CourierId courierId = new CourierId(courierUUID);
         final Delivery delivery = deliveries.confirm(deliveryId, courierId);
         final DeliveryDto dto = DeliveryDto.from(delivery);
         return ResponseEntity.ok(dto);
