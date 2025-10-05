@@ -1,6 +1,5 @@
 package be.kdg.sa.deliveryservice.infrastructure.delivery;
 
-import be.kdg.sa.deliveryservice.domain.NotFoundException;
 import be.kdg.sa.deliveryservice.domain.courier.CourierId;
 import be.kdg.sa.deliveryservice.domain.delivery.Delivery;
 import be.kdg.sa.deliveryservice.domain.delivery.DeliveryId;
@@ -39,7 +38,7 @@ public class DbDeliveryRepository implements DeliveryRepository {
     }
 
     @Override public List<Delivery> findDeliveriesFor(CourierId courierId) {
-        return this.jpaDeliveryRepository.findAllByCourierIdAndIsSuccessfulTrue(courierId.id())
+        return this.jpaDeliveryRepository.findAllByCourierIdAndStatus(courierId.id(), "DELIVERED")
                                          .orElse(List.of())
                                          .stream()
                                          .map(JpaDeliveryEntity::toDomain)

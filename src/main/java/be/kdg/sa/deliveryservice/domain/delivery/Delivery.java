@@ -10,7 +10,7 @@ import java.time.LocalDateTime;
     private final DeliveryId id;
     private final OrderId orderId;
     private CourierId courierId;
-    private boolean isSuccessful;
+    private DeliveryStatus status;
     private LocalDateTime startTime;
     private LocalDateTime endTime;
     private double payout;
@@ -18,35 +18,35 @@ import java.time.LocalDateTime;
     public Delivery(DeliveryId id, OrderId orderId) {
         this.id = id;
         this.orderId = orderId;
-        this.isSuccessful = false;
+        this.status = DeliveryStatus.UNCLAIMED;
     }
 
-    public CourierId getCourierId() {
-        return courierId;
-    }
-
-    public void setCourierId(CourierId courierId) {
+    public void claim(CourierId courierId) {
+        this.status.shouldBe(DeliveryStatus.UNCLAIMED);
         this.courierId = courierId;
+        this.status = DeliveryStatus.CLAIMED;
     }
 
-    public void setEndTime(LocalDateTime endTime) {
-        this.endTime = endTime;
+    public void setReadyNow() {
+        setReadyAt(LocalDateTime.now());
     }
 
-    public void setStartTime(LocalDateTime startTime) {
+    public void setReadyAt(LocalDateTime startTime) {
+        // check if is claimed
+        this.status.shouldBe(DeliveryStatus.CLAIMED);
         this.startTime = startTime;
+        this.status = DeliveryStatus.READY_FOR_PICKUP;
     }
 
-    public void claimNow(CourierId courierId) {
-        claimAt(courierId, LocalDateTime.now());
+    public void pickUpNow() {
+        pickUpAt(LocalDateTime.now());
     }
 
-    public void claimAt(CourierId courierId, LocalDateTime startTime) {
-        if (this.courierId != null) {
-            throw new IllegalStateException("Delivery is already claimed");
-        }
-        this.courierId = courierId;
+    public void pickUpAt(LocalDateTime startTime) {
+        // check if is ready for pickup
+        this.status.shouldBe(DeliveryStatus.READY_FOR_PICKUP);
         this.startTime = startTime;
+        this.status = DeliveryStatus.IN_DELIVERY;
     }
 
     public void finishNow() {
@@ -54,17 +54,12 @@ import java.time.LocalDateTime;
     }
 
     public void finishAt(LocalDateTime endTime) {
-        if (this.courierId == null) {
-            throw new IllegalStateException("Delivery is not claimed");
-        }
-        if (this.startTime == null) {
-            throw new IllegalStateException("Delivery has not started yet");
-        }
-        if (this.endTime != null || this.isSuccessful) {
-            throw new IllegalStateException("Delivery has not started yet");
-        }
+        // check if is in delivery
+        this.status.shouldBe(DeliveryStatus.IN_DELIVERY);
         this.endTime = endTime;
-        this.isSuccessful = true;
+        this.status = DeliveryStatus.DELIVERED;
+        // todo calculate payout
+        this.payout = 0;
     }
 
     public DeliveryId getId() {
@@ -75,8 +70,12 @@ import java.time.LocalDateTime;
         return orderId;
     }
 
-    public boolean isSuccessful() {
-        return isSuccessful;
+    public CourierId getCourierId() {
+        return courierId;
+    }
+
+    public DeliveryStatus getStatus() {
+        return status;
     }
 
     public LocalDateTime getStartTime() {

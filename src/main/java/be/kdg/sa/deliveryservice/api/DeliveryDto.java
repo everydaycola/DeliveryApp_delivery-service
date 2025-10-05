@@ -9,7 +9,7 @@ public record DeliveryDto(
         UUID id,
         UUID orderId,
         UUID courierId,
-        Boolean isSuccessful,
+        String status,
         LocalDateTime startTime,
         LocalDateTime endTime,
         double payout
@@ -19,7 +19,7 @@ public record DeliveryDto(
                 delivery.getId().id(),
                 delivery.getOrderId().id(),
                 delivery.getCourierId() == null ? null : delivery.getCourierId().id(),
-                delivery.isSuccessful(),
+                delivery.getStatus().toString(),
                 delivery.getStartTime(),
                 delivery.getEndTime(),
                 delivery.getPayout()

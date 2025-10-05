@@ -20,7 +20,7 @@ public class Courier {
 
     }
 
-    public Boolean HasOrder() {
+    public Boolean hasOrder() {
         return currentDelivery != null;
     }
 

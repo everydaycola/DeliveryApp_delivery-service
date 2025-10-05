@@ -35,10 +35,10 @@ public class DeliveryService {
     public Delivery confirm(DeliveryId deliveryId, CourierId courierId) {
         final Delivery delivery = deliveries.findById(deliveryId).orElseThrow(deliveryId::notFound);
         final Courier courier = couriers.findById(courierId).orElseThrow(courierId::notFound);
-        if (courier.HasOrder()) {
+        if (courier.hasOrder()) {
             throw new IllegalStateException("You already have an order.");
         }
-        delivery.claimNow(courierId);
+        delivery.claim(courierId);
         courier.claim(deliveryId);
         deliveries.save(delivery);
         couriers.save(courier);
@@ -46,7 +46,6 @@ public class DeliveryService {
     }
 
     public List<Delivery> findCompletedDeliveries(CourierId courierId) {
-        List<Delivery> deliveryList = deliveries.findDeliveriesFor(courierId);
-        return deliveryList;
+        return deliveries.findDeliveriesFor(courierId);
     }
 }

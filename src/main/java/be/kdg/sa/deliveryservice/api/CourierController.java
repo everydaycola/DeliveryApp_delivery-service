@@ -1,10 +1,7 @@
 package be.kdg.sa.deliveryservice.api;
 
 import be.kdg.sa.deliveryservice.application.DeliveryService;
-import be.kdg.sa.deliveryservice.domain.courier.Courier;
 import be.kdg.sa.deliveryservice.domain.courier.CourierId;
-import be.kdg.sa.deliveryservice.domain.delivery.Delivery;
-import be.kdg.sa.deliveryservice.infrastructure.DataSeeder;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;

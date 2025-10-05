@@ -3,6 +3,7 @@ package be.kdg.sa.deliveryservice.infrastructure.delivery.jpa;
 import be.kdg.sa.deliveryservice.domain.courier.CourierId;
 import be.kdg.sa.deliveryservice.domain.delivery.Delivery;
 import be.kdg.sa.deliveryservice.domain.delivery.DeliveryId;
+import be.kdg.sa.deliveryservice.domain.delivery.DeliveryStatus;
 import be.kdg.sa.deliveryservice.domain.order.OrderId;
 import be.kdg.sa.deliveryservice.infrastructure.courier.jpa.JpaCourierEntity;
 import be.kdg.sa.deliveryservice.infrastructure.courier.jpa.JpaCourierRepository;
@@ -27,7 +28,7 @@ public class JpaDeliveryEntity {
     private JpaCourierEntity courier;
 
     @Column(nullable = false)
-    private boolean isSuccessful;
+    private String status;
 
     @Column()
     private LocalDateTime startTime;
@@ -45,23 +46,17 @@ public class JpaDeliveryEntity {
         this.orderId = orderId;
     }
 
-    public UUID getId() {
-        return id;
-    }
-
     public static JpaDeliveryEntity fromDomain(Delivery delivery, JpaCourierRepository courierRepository) {
-        JpaDeliveryEntity jpaDeliveryEntity = new JpaDeliveryEntity(delivery.getId().id(),
-                                                                    delivery.getOrderId().id());
+        JpaDeliveryEntity jpaDeliveryEntity = new JpaDeliveryEntity(delivery.getId().id(), delivery.getOrderId().id());
 
         // Set courier if delivery has one assigned
         if (delivery.getCourierId() != null) {
             // or throw an exception if courier must exist
-            jpaDeliveryEntity.courier = courierRepository.findById(delivery.getCourierId().id())
-                                                         .orElse(null);
+            jpaDeliveryEntity.courier = courierRepository.findById(delivery.getCourierId().id()).orElse(null);
         }
 
         // Set other properties
-        jpaDeliveryEntity.isSuccessful = delivery.isSuccessful();
+        jpaDeliveryEntity.status = delivery.getStatus().toString();
         jpaDeliveryEntity.startTime = delivery.getStartTime() == null ? null : delivery.getStartTime();
         jpaDeliveryEntity.endTime = delivery.getEndTime() == null ? null : delivery.getEndTime();
         jpaDeliveryEntity.payout = delivery.getPayout();
@@ -69,19 +64,21 @@ public class JpaDeliveryEntity {
         return jpaDeliveryEntity;
     }
 
+    public UUID getId() {
+        return id;
+    }
+
     public Delivery toDomain() {
-        Delivery delivery = new Delivery(
-                new DeliveryId(this.id),
-                new OrderId(this.orderId)
-        );
-        if (this.courier == null) {
-            return delivery;
-        }
-        delivery.claimAt(new CourierId(this.courier.getId()), this.startTime);
-        if (!this.isSuccessful) {
-            return delivery;
-        }
-        delivery.finishAt(this.endTime);
+
+        DeliveryStatus status = DeliveryStatus.valueOf(this.status);
+
+        Delivery delivery = new Delivery(new DeliveryId(this.id), new OrderId(this.orderId));
+
+        if (status.getPhase() >= 1) delivery.claim(new CourierId(this.courier.getId()));
+        if (status.getPhase() >= 2) delivery.setReadyAt(this.startTime);
+        if (status.getPhase() >= 3) delivery.pickUpAt(this.startTime);
+        if (status.getPhase() >= 4) delivery.finishAt(this.endTime);
+
         return delivery;
     }
 
