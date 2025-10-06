@@ -9,4 +9,6 @@ import java.util.UUID;
 public interface JpaDeliveryRepository extends JpaRepository<JpaDeliveryEntity, UUID> {
 
     Optional<List<JpaDeliveryEntity>> findAllByCourierIdAndStatus(UUID courierId, String status);
+
+    Optional<List<JpaDeliveryEntity>> findAllByStatus(String status);
 }

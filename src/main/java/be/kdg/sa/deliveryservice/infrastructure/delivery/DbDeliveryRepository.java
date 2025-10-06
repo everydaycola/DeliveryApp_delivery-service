@@ -4,6 +4,7 @@ import be.kdg.sa.deliveryservice.domain.courier.CourierId;
 import be.kdg.sa.deliveryservice.domain.delivery.Delivery;
 import be.kdg.sa.deliveryservice.domain.delivery.DeliveryId;
 import be.kdg.sa.deliveryservice.domain.delivery.DeliveryRepository;
+import be.kdg.sa.deliveryservice.domain.delivery.DeliveryStatus;
 import be.kdg.sa.deliveryservice.infrastructure.courier.jpa.JpaCourierRepository;
 import be.kdg.sa.deliveryservice.infrastructure.delivery.jpa.JpaDeliveryEntity;
 import be.kdg.sa.deliveryservice.infrastructure.delivery.jpa.JpaDeliveryRepository;
@@ -25,10 +26,18 @@ public class DbDeliveryRepository implements DeliveryRepository {
     }
 
     @Override
-    public List<Delivery> findALl() {
+    public List<Delivery> findall() {
         return jpaDeliveryRepository.findAll().stream()
                 .map(JpaDeliveryEntity::toDomain)
                 .toList();
+    }
+
+    @Override public List <Delivery> findallByStatus(DeliveryStatus status) {
+        return jpaDeliveryRepository.findAllByStatus(status.toString())
+                                    .orElse(List.of())
+                                    .stream()
+                                    .map(JpaDeliveryEntity::toDomain)
+                                    .toList();
     }
 
     @Override

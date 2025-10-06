@@ -8,8 +8,10 @@ import java.util.Optional;
 
 @Repository
 public interface DeliveryRepository {
-    List <Delivery> findALl();
+    List <Delivery> findall();
+    List<Delivery> findallByStatus(final DeliveryStatus status);
     Optional <Delivery> findById(final DeliveryId deliveryId);
     List<Delivery> findDeliveriesFor(CourierId courierId);
     void save(Delivery delivery);
+
 }

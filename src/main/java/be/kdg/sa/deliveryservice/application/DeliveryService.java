@@ -6,6 +6,7 @@ import be.kdg.sa.deliveryservice.domain.courier.CourierRepository;
 import be.kdg.sa.deliveryservice.domain.delivery.Delivery;
 import be.kdg.sa.deliveryservice.domain.delivery.DeliveryId;
 import be.kdg.sa.deliveryservice.domain.delivery.DeliveryRepository;
+import be.kdg.sa.deliveryservice.domain.delivery.DeliveryStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -24,7 +25,7 @@ public class DeliveryService {
     }
 
     public List<Delivery> findAll() {
-        return deliveries.findALl();
+        return deliveries.findall();
     }
 
     public Courier findCourierById(final CourierId courierId) {
@@ -47,5 +48,9 @@ public class DeliveryService {
 
     public List<Delivery> findCompletedDeliveries(CourierId courierId) {
         return deliveries.findDeliveriesFor(courierId);
+    }
+
+    public List<Delivery> findAllUnclaimed() {
+        return deliveries.findallByStatus(DeliveryStatus.UNCLAIMED);
     }
 }

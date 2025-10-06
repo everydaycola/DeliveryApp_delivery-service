@@ -30,6 +30,17 @@ public class DeliveryController {
         return ResponseEntity.ok(deliveryDtos);
     }
 
+    @GetMapping("/unclaimed")
+    public ResponseEntity <List <DeliveryDto>> findAllUnclaimed() {
+        List <Delivery> foundDeliveries = this.deliveries.findAllUnclaimed();
+
+        List <DeliveryDto> deliveryDtos = foundDeliveries.stream()
+                                         .map(DeliveryDto::from)
+                                         .toList();
+
+        return ResponseEntity.ok(deliveryDtos);
+    }
+
     @PostMapping("/{deliveryId}/claim/{courierId}")
     public ResponseEntity<DeliveryDto> confirm(@PathVariable("deliveryId") final UUID deliveryUUID,
                                                @PathVariable("courierId") final UUID courierUUID) {
