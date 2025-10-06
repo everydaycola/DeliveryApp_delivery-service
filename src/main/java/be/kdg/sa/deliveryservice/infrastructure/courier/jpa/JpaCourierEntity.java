@@ -39,9 +39,9 @@ public class JpaCourierEntity {
     public static JpaCourierEntity fromDomain(Courier courier, JpaDeliveryRepository deliveryRepository) {
         JpaCourierEntity jpaCourierEntity = new JpaCourierEntity(courier.getId().id());
 
-        if (courier.getOrderId() != null) {
+        if (courier.getCurrentDeliveryId() != null) {
             // or throw an exception if delivery must exist
-            jpaCourierEntity.currentDeliveryId = deliveryRepository.findById(courier.getOrderId().id())
+            jpaCourierEntity.currentDeliveryId = deliveryRepository.findById(courier.getCurrentDeliveryId().id())
                     .orElse(null);
 
 

@@ -27,6 +27,12 @@ import java.time.LocalDateTime;
         this.status = DeliveryStatus.CLAIMED;
     }
 
+    public void unclaim() {
+        this.status.shouldBe(DeliveryStatus.CLAIMED);
+        this.courierId = null;
+        this.status = DeliveryStatus.UNCLAIMED;
+    }
+
     public void setReadyNow() {
         setReadyAt(LocalDateTime.now());
     }

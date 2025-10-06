@@ -33,12 +33,9 @@ public class DeliveryService {
                      .orElseThrow(courierId::notFound);
     }
 
-    public Delivery confirm(DeliveryId deliveryId, CourierId courierId) {
+    public Delivery claim(DeliveryId deliveryId, CourierId courierId) {
         final Delivery delivery = deliveries.findById(deliveryId).orElseThrow(deliveryId::notFound);
         final Courier courier = couriers.findById(courierId).orElseThrow(courierId::notFound);
-        if (courier.hasOrder()) {
-            throw new IllegalStateException("You already have an order.");
-        }
         delivery.claim(courierId);
         courier.claim(deliveryId);
         deliveries.save(delivery);
@@ -52,5 +49,16 @@ public class DeliveryService {
 
     public List<Delivery> findAllUnclaimed() {
         return deliveries.findallByStatus(DeliveryStatus.UNCLAIMED);
+    }
+
+    public Courier unclaim(CourierId courierId) {
+        final Courier courier = couriers.findById(courierId).orElseThrow(courierId::notFound);
+        final DeliveryId oldDeliveryId = courier.unclaim();
+        final Delivery delivery = deliveries.findById(oldDeliveryId)
+                .orElseThrow(() -> new IllegalStateException("Previously claimed delivery not found"));
+        delivery.unclaim();
+        couriers.save(courier);
+        deliveries.save(delivery);
+        return courier;
     }
 }

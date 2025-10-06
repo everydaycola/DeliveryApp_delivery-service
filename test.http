@@ -34,3 +34,6 @@ POST http://localhost:8082/api/couriers/{{courier1}}/claim/{{delivery6}}
 
 ### POST request to claim an already claimed order
 POST http://localhost:8082/api/couriers/{{courier1}}/claim/{{delivery1}}
+
+### POST request to unclaim your claimed order
+POST http://localhost:8082/api/couriers/{{courier1}}/unclaim

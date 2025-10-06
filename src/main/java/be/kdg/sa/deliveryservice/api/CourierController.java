@@ -1,6 +1,7 @@
 package be.kdg.sa.deliveryservice.api;
 
 import be.kdg.sa.deliveryservice.application.DeliveryService;
+import be.kdg.sa.deliveryservice.domain.courier.Courier;
 import be.kdg.sa.deliveryservice.domain.courier.CourierId;
 import be.kdg.sa.deliveryservice.domain.delivery.Delivery;
 import be.kdg.sa.deliveryservice.domain.delivery.DeliveryId;
@@ -30,12 +31,20 @@ public class CourierController {
     }
 
     @PostMapping("/{courierId}/claim/{deliveryId}")
-    public ResponseEntity<DeliveryDto> confirm(@PathVariable("courierId") final UUID courierUUID,
+    public ResponseEntity<DeliveryDto> claim(@PathVariable("courierId") final UUID courierUUID,
                                                @PathVariable("deliveryId") final UUID deliveryUUID) {
         final DeliveryId deliveryId = new DeliveryId(deliveryUUID);
         final CourierId courierId = new CourierId(courierUUID);
-        final Delivery delivery = deliveries.confirm(deliveryId, courierId);
+        final Delivery delivery = deliveries.claim(deliveryId, courierId);
         final DeliveryDto dto = DeliveryDto.from(delivery);
+        return ResponseEntity.ok(dto);
+    }
+
+    @PostMapping("/{id}/unclaim")
+    public ResponseEntity<CourierDto> confirm(@PathVariable final UUID id) {
+        final CourierId courierId = new CourierId(id);
+        final Courier courier = deliveries.unclaim(courierId);
+        final CourierDto dto = CourierDto.from(courier);
         return ResponseEntity.ok(dto);
     }
 }
