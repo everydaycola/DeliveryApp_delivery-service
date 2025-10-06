@@ -2,10 +2,12 @@ package be.kdg.sa.deliveryservice.api;
 
 import be.kdg.sa.deliveryservice.application.DeliveryService;
 import be.kdg.sa.deliveryservice.domain.delivery.Delivery;
+import be.kdg.sa.deliveryservice.domain.delivery.DeliveryId;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.UUID;
 
 @RestController
 @RequestMapping("/api/deliveries")
@@ -36,5 +38,13 @@ public class DeliveryController {
                                          .toList();
 
         return ResponseEntity.ok(deliveryDtos);
+    }
+
+    @PostMapping("/{id}/ready")
+    public ResponseEntity<DeliveryDto> setReady(@PathVariable final UUID id) {
+        final DeliveryId deliveryId = new DeliveryId(id);
+        final Delivery delivery = deliveries.ready(deliveryId);
+        final DeliveryDto dto = DeliveryDto.from(delivery);
+        return ResponseEntity.ok(dto);
     }
 }

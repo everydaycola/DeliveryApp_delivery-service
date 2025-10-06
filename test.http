@@ -20,20 +20,24 @@ GET http://localhost:8082/api/couriers/{{courier1}}
 ### GET request for courier 2
 GET http://localhost:8082/api/couriers/{{courier2}}
 
-### GET request for courier 1 past orders
+### GET request for courier 1 past deliveries
 GET http://localhost:8082/api/couriers/{{courier1}}/completed
 
-### GET request for courier 2 past orders
+### GET request for courier 2 past deliveries
 GET http://localhost:8082/api/couriers/{{courier2}}/completed
 
-### POST request to claim order as courier
+### POST request to claim delivery as courier
 POST http://localhost:8082/api/couriers/{{courier1}}/claim/{{delivery5}}
 
-### POST request to claim order as courier (Use it to try and claim an order when you already have one)
+### POST request to claim delivery as courier (Use it to try and claim a delivery when you already have one)
 POST http://localhost:8082/api/couriers/{{courier1}}/claim/{{delivery6}}
 
-### POST request to claim an already claimed order
+### POST request to claim an already claimed delivery
 POST http://localhost:8082/api/couriers/{{courier1}}/claim/{{delivery1}}
 
-### POST request to unclaim your claimed order
+### POST request to unclaim your claimed delivery
 POST http://localhost:8082/api/couriers/{{courier1}}/unclaim
+
+### POST request set delivery ready for pickup (Should only be preformed via order by restaurant)
+POST http://localhost:8082/api/deliveries/{{delivery5}}/ready
+

@@ -61,4 +61,11 @@ public class DeliveryService {
         deliveries.save(delivery);
         return courier;
     }
+
+    public Delivery ready(DeliveryId deliveryId) {
+        final Delivery delivery = deliveries.findById(deliveryId).orElseThrow(deliveryId::notFound);
+        delivery.setReadyNow();
+        deliveries.save(delivery);
+        return delivery;
+    }
 }
