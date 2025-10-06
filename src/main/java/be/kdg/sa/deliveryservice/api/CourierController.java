@@ -2,11 +2,10 @@ package be.kdg.sa.deliveryservice.api;
 
 import be.kdg.sa.deliveryservice.application.DeliveryService;
 import be.kdg.sa.deliveryservice.domain.courier.CourierId;
+import be.kdg.sa.deliveryservice.domain.delivery.Delivery;
+import be.kdg.sa.deliveryservice.domain.delivery.DeliveryId;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.UUID;
@@ -30,4 +29,13 @@ public class CourierController {
         return ResponseEntity.ok(deliveries.findCompletedDeliveries(new CourierId(id)).stream().map(DeliveryDto::from).toList());
     }
 
+    @PostMapping("/{courierId}/claim/{deliveryId}")
+    public ResponseEntity<DeliveryDto> confirm(@PathVariable("courierId") final UUID courierUUID,
+                                               @PathVariable("deliveryId") final UUID deliveryUUID) {
+        final DeliveryId deliveryId = new DeliveryId(deliveryUUID);
+        final CourierId courierId = new CourierId(courierUUID);
+        final Delivery delivery = deliveries.confirm(deliveryId, courierId);
+        final DeliveryDto dto = DeliveryDto.from(delivery);
+        return ResponseEntity.ok(dto);
+    }
 }

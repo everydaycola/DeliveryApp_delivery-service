@@ -27,10 +27,10 @@ GET http://localhost:8082/api/couriers/{{courier1}}/completed
 GET http://localhost:8082/api/couriers/{{courier2}}/completed
 
 ### POST request to claim order as courier
-POST http://localhost:8082/api/deliveries/{{delivery5}}/claim/{{courier1}}
+POST http://localhost:8082/api/couriers/{{courier1}}/claim/{{delivery5}}
 
 ### POST request to claim order as courier (Use it to try and claim an order when you already have one)
-POST http://localhost:8082/api/deliveries/{{delivery6}}/claim/{{courier1}}
+POST http://localhost:8082/api/couriers/{{courier1}}/claim/{{delivery6}}
 
 ### POST request to claim an already claimed order
-POST http://localhost:8082/api/deliveries/{{delivery1}}/claim/{{courier1}}
+POST http://localhost:8082/api/couriers/{{courier1}}/claim/{{delivery1}}
