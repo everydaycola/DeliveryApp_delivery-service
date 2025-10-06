@@ -44,14 +44,9 @@ import java.time.LocalDateTime;
         this.status = DeliveryStatus.READY_FOR_PICKUP;
     }
 
-    public void pickUpNow() {
-        pickUpAt(LocalDateTime.now());
-    }
-
-    public void pickUpAt(LocalDateTime startTime) {
+    public void pickUp() {
         // check if is ready for pickup
         this.status.shouldBe(DeliveryStatus.READY_FOR_PICKUP);
-        this.startTime = startTime;
         this.status = DeliveryStatus.IN_DELIVERY;
     }
 

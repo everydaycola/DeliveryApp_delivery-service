@@ -41,3 +41,6 @@ POST http://localhost:8082/api/couriers/{{courier1}}/unclaim
 ### POST request set delivery ready for pickup (Should only be preformed via order by restaurant)
 POST http://localhost:8082/api/deliveries/{{delivery5}}/ready
 
+### POST request set delivery as picked up and on the way (IN_DELIVERY)
+POST http://localhost:8082/api/deliveries/{{delivery5}}/pickup
+
