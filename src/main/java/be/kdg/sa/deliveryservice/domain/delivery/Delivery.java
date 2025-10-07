@@ -4,9 +4,16 @@ import be.kdg.sa.deliveryservice.domain.courier.CourierId;
 import be.kdg.sa.deliveryservice.domain.order.OrderId;
 import org.jmolecules.ddd.annotation.Entity;
 
+import java.time.Duration;
 import java.time.LocalDateTime;
 
 @Entity public class Delivery {
+
+    private static final double BASE_PAYOUT = 3;
+    private static final double PER_MINUTE_PAYOUT = 0.3;
+    private static final double MINIMUM_MINUTES = 5;
+    private static final double MAXIMUM_MINUTES = 30;
+
     private final DeliveryId id;
     private final OrderId orderId;
     private CourierId courierId;
@@ -58,9 +65,13 @@ import java.time.LocalDateTime;
         // check if is in delivery
         this.status.shouldBe(DeliveryStatus.IN_DELIVERY);
         this.endTime = endTime;
+        this.payout = calculatePayout(this.startTime, endTime);
         this.status = DeliveryStatus.DELIVERED;
-        // todo calculate payout
-        this.payout = 0;
+    }
+
+    private double calculatePayout(LocalDateTime startTime, LocalDateTime endTime) {
+        double minutes = Math.ceil(Duration.between(startTime, endTime).getSeconds() / 60.0);
+        return BASE_PAYOUT + (PER_MINUTE_PAYOUT * Math.clamp(minutes, MINIMUM_MINUTES, MAXIMUM_MINUTES));
     }
 
     public DeliveryId getId() {

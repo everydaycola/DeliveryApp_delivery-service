@@ -75,4 +75,11 @@ public class DeliveryService {
         deliveries.save(delivery);
         return delivery;
     }
+
+    public Delivery deliver(DeliveryId deliveryId) {
+        final Delivery delivery = deliveries.findById(deliveryId).orElseThrow(deliveryId::notFound);
+        delivery.finishNow();
+        deliveries.save(delivery);
+        return delivery;
+    }
 }

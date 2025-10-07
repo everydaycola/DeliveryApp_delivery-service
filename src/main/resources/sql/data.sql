@@ -13,15 +13,15 @@ VALUES ('550e8400-e29b-41d4-a716-446655440002', '770e8400-e29b-41d4-a716-4466554
 -- Seed Deliveries
 -- Delivery 1 - successful delivery by courier 2
 INSERT INTO deliveries (id, order_id, courier_id, status, start_time, end_time, payout)
-VALUES ('770e8400-e29b-41d4-a716-446655440001', '660e8400-e29b-41d4-a716-446655440001', '550e8400-e29b-41d4-a716-446655440002',  'DELIVERED', '2025-10-01 12:00:00', '2025-10-01 12:34:56', 10.30);
+VALUES ('770e8400-e29b-41d4-a716-446655440001', '660e8400-e29b-41d4-a716-446655440001', '550e8400-e29b-41d4-a716-446655440002',  'DELIVERED', '2025-10-01 12:00:00', '2025-10-01 12:12:56', 6.6);
 
 -- Delivery 2 - successful delivery by courier 2
 INSERT INTO deliveries (id, order_id, courier_id, status, start_time, end_time, payout)
-VALUES ('770e8400-e29b-41d4-a716-446655440002', '660e8400-e29b-41d4-a716-446655440002', '550e8400-e29b-41d4-a716-446655440002', 'DELIVERED', '2025-10-03 12:00:00', '2025-10-03 12:34:56', 23.43);
+VALUES ('770e8400-e29b-41d4-a716-446655440002', '660e8400-e29b-41d4-a716-446655440002', '550e8400-e29b-41d4-a716-446655440002', 'DELIVERED', '2025-10-03 12:00:00', '2025-10-03 12:20:56', 9.0);
 
 -- Delivery 3 - successful delivery by courier 1
 INSERT INTO deliveries (id, order_id, courier_id, status, start_time, end_time, payout)
-VALUES ('770e8400-e29b-41d4-a716-446655440003', '660e8400-e29b-41d4-a716-446655440003', '550e8400-e29b-41d4-a716-446655440001', 'DELIVERED', '2025-10-05 12:00:00', '2025-10-05 12:34:56', 12.65);
+VALUES ('770e8400-e29b-41d4-a716-446655440003', '660e8400-e29b-41d4-a716-446655440003', '550e8400-e29b-41d4-a716-446655440001', 'DELIVERED', '2025-10-05 12:00:00', '2025-10-05 12:01:56', 4.5);
 
 -- Delivery 4 - active delivery by courier 2 (not successful yet)
 INSERT INTO deliveries (id, order_id, courier_id, status, start_time, payout)

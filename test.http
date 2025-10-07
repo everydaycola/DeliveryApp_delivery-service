@@ -44,3 +44,5 @@ POST http://localhost:8082/api/deliveries/{{delivery5}}/ready
 ### POST request set delivery as picked up and on the way (IN_DELIVERY)
 POST http://localhost:8082/api/deliveries/{{delivery5}}/pickup
 
+### POST request set delivery as delivered and calculate the payout.
+POST http://localhost:8082/api/deliveries/{{delivery5}}/deliver

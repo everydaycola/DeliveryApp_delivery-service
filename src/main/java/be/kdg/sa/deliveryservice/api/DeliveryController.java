@@ -55,4 +55,12 @@ public class DeliveryController {
         final DeliveryDto dto = DeliveryDto.from(delivery);
         return ResponseEntity.ok(dto);
     }
+
+    @PostMapping("/{id}/deliver")
+    public ResponseEntity<DeliveryDto> setDelivered(@PathVariable final UUID id) {
+        final DeliveryId deliveryId = new DeliveryId(id);
+        final Delivery delivery = deliveries.deliver(deliveryId);
+        final DeliveryDto dto = DeliveryDto.from(delivery);
+        return ResponseEntity.ok(dto);
+    }
 }
