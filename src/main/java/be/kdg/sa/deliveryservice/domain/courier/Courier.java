@@ -11,7 +11,7 @@ public class Courier {
     private final CourierId id;
     private DeliveryId currentDelivery;
     private final List <DeliveryId> pastDeliveries;
-    private String name;
+    private final String name;
     // some field to link it to the identity class
 
     public Courier(CourierId id, String name) {

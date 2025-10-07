@@ -77,7 +77,10 @@ public class JpaDeliveryEntity {
         if (status.getPhase() >= 1) delivery.claim(new CourierId(this.courier.getId()));
         if (status.getPhase() >= 2) delivery.setReadyAt(this.startTime);
         if (status.getPhase() >= 3) delivery.pickUp();
-        if (status.getPhase() >= 4) delivery.finishAt(this.endTime);
+        if (status.getPhase() >= 4) {
+            delivery.finishAt(this.endTime);
+            delivery.setPayout(this.payout);
+        };
 
         return delivery;
     }

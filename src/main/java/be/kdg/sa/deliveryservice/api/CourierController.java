@@ -8,7 +8,6 @@ import be.kdg.sa.deliveryservice.domain.delivery.DeliveryId;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
 import java.util.UUID;
 
 @RestController
@@ -26,8 +25,8 @@ public class CourierController {
     }
 
     @GetMapping("/{id}/completed")
-    public ResponseEntity<List<DeliveryDto>> getCompletedDeliveries(@PathVariable final UUID id) {
-        return ResponseEntity.ok(deliveries.findCompletedDeliveries(new CourierId(id)).stream().map(DeliveryDto::from).toList());
+    public ResponseEntity<CompletedDeliveriesDto> getCompletedDeliveries(@PathVariable final UUID id) {
+        return ResponseEntity.ok(CompletedDeliveriesDto.from(deliveries.findCompletedDeliveries(new CourierId(id))));
     }
 
     @PostMapping("/{courierId}/claim/{deliveryId}")

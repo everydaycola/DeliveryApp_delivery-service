@@ -74,6 +74,10 @@ import java.time.LocalDateTime;
         return BASE_PAYOUT + (PER_MINUTE_PAYOUT * Math.clamp(minutes, MINIMUM_MINUTES, MAXIMUM_MINUTES));
     }
 
+    public void setPayout(double payout) {
+        this.payout = payout;
+    }
+
     public DeliveryId getId() {
         return id;
     }
