@@ -14,7 +14,7 @@ GET http://localhost:8082/api/deliveries
 ### GET request for all unclaimed deliveries
 GET http://localhost:8082/api/deliveries/unclaimed
 
-### Get request for single  delivery
+### Get request for single delivery
 GET http://localhost:8082/api/deliveries/{{delivery5}}
 
 ### GET request for courier 1

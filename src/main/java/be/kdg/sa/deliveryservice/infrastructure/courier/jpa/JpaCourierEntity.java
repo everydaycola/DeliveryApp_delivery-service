@@ -26,10 +26,14 @@ public class JpaCourierEntity {
     @OneToMany(mappedBy = "courier", fetch = FetchType.LAZY)
     private List<JpaDeliveryEntity> pastDeliveries;
 
+    @Column
+    private String name;
+
     protected JpaCourierEntity() {}
 
-    public JpaCourierEntity(UUID id) {
-        this.id = id;;
+    public JpaCourierEntity(UUID id, String name) {
+        this.id = id;
+        this.name = name;
     }
 
     public UUID getId() {
@@ -37,7 +41,7 @@ public class JpaCourierEntity {
     }
 
     public static JpaCourierEntity fromDomain(Courier courier, JpaDeliveryRepository deliveryRepository) {
-        JpaCourierEntity jpaCourierEntity = new JpaCourierEntity(courier.getId().id());
+        JpaCourierEntity jpaCourierEntity = new JpaCourierEntity(courier.getId().id(), courier.getName());
 
         if (courier.getCurrentDeliveryId() != null) {
             // or throw an exception if delivery must exist
@@ -59,7 +63,7 @@ public class JpaCourierEntity {
     }
 
     public Courier toDomain() {
-        Courier courier = new Courier(new CourierId(this.id));
+        Courier courier = new Courier(new CourierId(this.id), this.name);
         if (this.currentDeliveryId != null) {
             courier.claim(new DeliveryId(this.currentDeliveryId.getId()));
         }

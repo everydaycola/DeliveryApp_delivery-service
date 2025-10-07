@@ -3,12 +3,12 @@ SET session_replication_role = 'replica';
 
 -- Seed Couriers
 -- Courier 1 - no active delivery (current_delivery_id is NULL)
-INSERT INTO couriers (id, current_delivery_id)
-VALUES ('550e8400-e29b-41d4-a716-446655440001', NULL);
+INSERT INTO couriers (id, current_delivery_id, name)
+VALUES ('550e8400-e29b-41d4-a716-446655440001', NULL, 'Ilja Nachtergaele');
 
 -- Courier 2 - has active delivery (Delivery4Id)
-INSERT INTO couriers (id, current_delivery_id)
-VALUES ('550e8400-e29b-41d4-a716-446655440002', '770e8400-e29b-41d4-a716-446655440004');
+INSERT INTO couriers (id, current_delivery_id, name)
+VALUES ('550e8400-e29b-41d4-a716-446655440002', '770e8400-e29b-41d4-a716-446655440004',  'Stijn Similon');
 
 -- Seed Deliveries
 -- Delivery 1 - successful delivery by courier 2
