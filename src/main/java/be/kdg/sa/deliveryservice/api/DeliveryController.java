@@ -1,6 +1,7 @@
 package be.kdg.sa.deliveryservice.api;
 
 import be.kdg.sa.deliveryservice.application.DeliveryService;
+import be.kdg.sa.deliveryservice.domain.courier.CourierId;
 import be.kdg.sa.deliveryservice.domain.delivery.Delivery;
 import be.kdg.sa.deliveryservice.domain.delivery.DeliveryId;
 import org.springframework.http.ResponseEntity;
@@ -38,6 +39,11 @@ public class DeliveryController {
                                          .toList();
 
         return ResponseEntity.ok(deliveryDtos);
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity <DeliveryDto> findDelivery(@PathVariable final UUID id) {
+        return ResponseEntity.ok(DeliveryDto.from(deliveries.findDelivery(new DeliveryId(id))));
     }
 
     @PostMapping("/{id}/ready")

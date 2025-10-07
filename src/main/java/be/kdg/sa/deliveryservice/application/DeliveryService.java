@@ -30,7 +30,7 @@ public class DeliveryService {
 
     public Courier findCourierById(final CourierId courierId) {
         return couriers.findById(courierId)
-                     .orElseThrow(courierId::notFound);
+                .orElseThrow(courierId::notFound);
     }
 
     public Delivery claim(DeliveryId deliveryId, CourierId courierId) {
@@ -81,5 +81,10 @@ public class DeliveryService {
         delivery.finishNow();
         deliveries.save(delivery);
         return delivery;
+    }
+
+    public Delivery findDelivery(DeliveryId deliveryId) {
+        return deliveries.findById(deliveryId)
+                .orElseThrow(deliveryId::notFound);
     }
 }
