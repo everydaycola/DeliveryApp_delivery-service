@@ -1,5 +1,6 @@
 package be.kdg.sa.deliveryservice.application;
 
+import be.kdg.sa.deliveryservice.domain.NotFoundException;
 import be.kdg.sa.deliveryservice.domain.courier.Courier;
 import be.kdg.sa.deliveryservice.domain.courier.CourierId;
 import be.kdg.sa.deliveryservice.domain.courier.CourierRepository;
@@ -55,7 +56,7 @@ public class DeliveryService {
         final Courier courier = couriers.findById(courierId).orElseThrow(courierId::notFound);
         final DeliveryId oldDeliveryId = courier.unClaim();
         final Delivery delivery = deliveries.findById(oldDeliveryId)
-                .orElseThrow(() -> new IllegalStateException("Previously claimed delivery not found"));
+                .orElseThrow(() -> new NotFoundException("Previously claimed delivery not found"));
         delivery.unClaim();
         couriers.save(courier);
         deliveries.save(delivery);
