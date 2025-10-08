@@ -34,7 +34,7 @@ import java.time.LocalDateTime;
         this.status = DeliveryStatus.CLAIMED;
     }
 
-    public void unclaim() {
+    public void unClaim() {
         this.status.shouldBe(DeliveryStatus.CLAIMED);
         this.courierId = null;
         this.status = DeliveryStatus.UNCLAIMED;

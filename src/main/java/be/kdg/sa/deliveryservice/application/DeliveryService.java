@@ -51,12 +51,12 @@ public class DeliveryService {
         return deliveries.findallByStatus(DeliveryStatus.UNCLAIMED);
     }
 
-    public Courier unclaim(CourierId courierId) {
+    public Courier unClaim(CourierId courierId) {
         final Courier courier = couriers.findById(courierId).orElseThrow(courierId::notFound);
         final DeliveryId oldDeliveryId = courier.unClaim();
         final Delivery delivery = deliveries.findById(oldDeliveryId)
                 .orElseThrow(() -> new IllegalStateException("Previously claimed delivery not found"));
-        delivery.unclaim();
+        delivery.unClaim();
         couriers.save(courier);
         deliveries.save(delivery);
         return courier;

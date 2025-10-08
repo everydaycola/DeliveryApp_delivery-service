@@ -42,7 +42,7 @@ public class CourierController {
     @PostMapping("/{id}/unclaim")
     public ResponseEntity<CourierDto> confirm(@PathVariable final UUID id) {
         final CourierId courierId = new CourierId(id);
-        final Courier courier = deliveries.unclaim(courierId);
+        final Courier courier = deliveries.unClaim(courierId);
         final CourierDto dto = CourierDto.from(courier);
         return ResponseEntity.ok(dto);
     }
