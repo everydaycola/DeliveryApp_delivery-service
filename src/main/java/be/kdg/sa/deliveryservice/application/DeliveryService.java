@@ -25,7 +25,7 @@ public class DeliveryService {
     }
 
     public List<Delivery> findAll() {
-        return deliveries.findall();
+        return deliveries.findAll();
     }
 
     public Courier findCourierById(final CourierId courierId) {

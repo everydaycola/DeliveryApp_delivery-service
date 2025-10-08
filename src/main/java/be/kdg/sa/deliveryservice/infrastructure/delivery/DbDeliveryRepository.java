@@ -26,7 +26,7 @@ public class DbDeliveryRepository implements DeliveryRepository {
     }
 
     @Override
-    public List<Delivery> findall() {
+    public List<Delivery> findAll() {
         return jpaDeliveryRepository.findAll().stream()
                 .map(JpaDeliveryEntity::toDomain)
                 .toList();
