@@ -48,7 +48,7 @@ public class DeliveryService {
     }
 
     public List<Delivery> findAllUnclaimed() {
-        return deliveries.findallByStatus(DeliveryStatus.UNCLAIMED);
+        return deliveries.findAllByStatus(DeliveryStatus.UNCLAIMED);
     }
 
     public Courier unClaim(CourierId courierId) {

@@ -32,7 +32,7 @@ public class DbDeliveryRepository implements DeliveryRepository {
                 .toList();
     }
 
-    @Override public List <Delivery> findallByStatus(DeliveryStatus status) {
+    @Override public List <Delivery> findAllByStatus(DeliveryStatus status) {
         return jpaDeliveryRepository.findAllByStatus(status.toString())
                                     .orElse(List.of())
                                     .stream()
