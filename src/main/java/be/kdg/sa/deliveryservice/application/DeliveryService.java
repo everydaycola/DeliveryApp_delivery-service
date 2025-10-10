@@ -79,8 +79,11 @@ public class DeliveryService {
 
     public Delivery deliver(DeliveryId deliveryId) {
         final Delivery delivery = deliveries.findById(deliveryId).orElseThrow(deliveryId::notFound);
+        final Courier courier = couriers.findById(delivery.getCourierId()).orElseThrow(delivery.getCourierId()::notFound);
         delivery.finishNow();
+        courier.finishDelivery();
         deliveries.save(delivery);
+        couriers.save(courier);
         return delivery;
     }
 

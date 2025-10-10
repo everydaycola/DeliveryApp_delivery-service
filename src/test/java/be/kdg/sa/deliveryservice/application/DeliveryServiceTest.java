@@ -363,11 +363,14 @@ class DeliveryServiceTest {
         OrderId orderId = OrderId.create();
         CourierId courierId = CourierId.create();
         Delivery delivery = new Delivery(deliveryId, orderId);
+        Courier courier = new Courier(courierId, "John");
         delivery.claim(courierId);
+        courier.claim(deliveryId);
         delivery.setReadyNow();
         delivery.pickUp();
 
         given(deliveryRepository.findById(deliveryId)).willReturn(Optional.of(delivery));
+        given(courierRepository.findById(courierId)).willReturn(Optional.of(courier));
 
         // act
         var result = sut.deliver(deliveryId);
@@ -376,6 +379,7 @@ class DeliveryServiceTest {
         assertThat(result).isEqualTo(delivery);
 
         verify(deliveryRepository).save(delivery);
+        verify(courierRepository).save(courier);
 
         assertThat(result.getStatus()).isEqualTo(DeliveryStatus.DELIVERED);
         assertThat(result.getEndTime()).isNotNull();
@@ -394,6 +398,31 @@ class DeliveryServiceTest {
         delivery.pickUp();
 
         given(deliveryRepository.findById(deliveryId)).willReturn(Optional.empty());
+
+        // act & assert
+        assertThrows(NotFoundException.class,
+                () -> sut.deliver(deliveryId));
+
+        verify(deliveryRepository, never()).save(delivery);
+
+        assertThat(delivery.getStatus()).isEqualTo(DeliveryStatus.IN_DELIVERY);
+        assertThat(delivery.getEndTime()).isNull();
+        assertThat(delivery.getPayout()).isEqualTo(0);
+    }
+
+    @Test
+    void deliverShouldThrowExceptionWhenCourierNotFound() {
+        // arrange
+        DeliveryId deliveryId = DeliveryId.create();
+        OrderId orderId = OrderId.create();
+        CourierId courierId = CourierId.create();
+        Delivery delivery = new Delivery(deliveryId, orderId);
+        delivery.claim(courierId);
+        delivery.setReadyNow();
+        delivery.pickUp();
+
+        given(deliveryRepository.findById(deliveryId)).willReturn(Optional.of(delivery));
+        given(courierRepository.findById(courierId)).willReturn(Optional.empty());
 
         // act & assert
         assertThrows(NotFoundException.class,

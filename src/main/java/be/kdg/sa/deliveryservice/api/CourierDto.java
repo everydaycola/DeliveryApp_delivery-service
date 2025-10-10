@@ -6,7 +6,7 @@ import java.util.UUID;
 
 public record CourierDto(UUID id,
                          String name,
-                         UUID orderId){
+                         UUID deliveryId){
     public static CourierDto from(final Courier courier) {
 
         return new CourierDto(

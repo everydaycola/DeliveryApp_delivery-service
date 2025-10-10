@@ -52,6 +52,14 @@ public class Courier {
         return old_delivery;
     }
 
+    public void finishDelivery() {
+        if (this.currentDelivery == null) {
+            throw new IllegalStateException("Courier doesn't have an order");
+        }
+        this.pastDeliveries.add(this.currentDelivery);
+        this.currentDelivery = null;
+    }
+
     public String getName() {
         return name;
     }
