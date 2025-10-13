@@ -45,7 +45,7 @@ public class DeliveryService {
     }
 
     public List<Delivery> findCompletedDeliveries(CourierId courierId) {
-        return deliveries.findDeliveriesFor(courierId);
+        return deliveries.findCompletedDeliveriesFor(courierId);
     }
 
     public List<Delivery> findAllUnclaimed() {

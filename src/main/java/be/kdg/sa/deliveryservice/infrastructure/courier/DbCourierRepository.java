@@ -9,13 +9,12 @@ import be.kdg.sa.deliveryservice.infrastructure.delivery.jpa.JpaDeliveryEntity;
 import be.kdg.sa.deliveryservice.infrastructure.delivery.jpa.JpaDeliveryRepository;
 import org.springframework.stereotype.Repository;
 
-import java.util.Optional;
+import java.util.*;
 
 @Repository
 public class DbCourierRepository implements CourierRepository {
 
     private final JpaCourierRepository jpaCourierRepository;
-    // todo this is not correct
     private final JpaDeliveryRepository jpaDeliveryRepository;
 
     public DbCourierRepository(JpaCourierRepository jpaCourierRepository, JpaDeliveryRepository jpaDeliveryRepository) {
@@ -31,7 +30,19 @@ public class DbCourierRepository implements CourierRepository {
 
     @Override
     public void save(Courier courier) {
-        JpaCourierEntity jpaCourierEntity = JpaCourierEntity.fromDomain(courier, jpaDeliveryRepository);
+        JpaDeliveryEntity currentDelivery = Optional.ofNullable(courier.getCurrentDeliveryId())
+                .flatMap(deliveryId -> jpaDeliveryRepository.findById(deliveryId.id()))
+                .orElse(null);
+
+        List<JpaDeliveryEntity> pastDeliveries = Optional.ofNullable(courier.getPastDeliveries())
+                .orElse(Collections.emptyList())
+                .stream()
+                .map(deliveryId -> jpaDeliveryRepository.findById(deliveryId.id()))
+                .flatMap(Optional::stream)
+                .toList();
+
+        JpaCourierEntity jpaCourierEntity = JpaCourierEntity
+                .fromDomain(courier, currentDelivery, pastDeliveries);
         this.jpaCourierRepository.save(jpaCourierEntity);
     }
 }

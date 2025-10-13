@@ -11,7 +11,7 @@ public interface DeliveryRepository {
     List <Delivery> findAll();
     List<Delivery> findAllByStatus(final DeliveryStatus status);
     Optional <Delivery> findById(final DeliveryId deliveryId);
-    List<Delivery> findDeliveriesFor(CourierId courierId);
+    List<Delivery> findCompletedDeliveriesFor(CourierId courierId);
     void save(Delivery delivery);
 
 }

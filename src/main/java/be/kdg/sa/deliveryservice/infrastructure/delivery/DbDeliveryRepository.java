@@ -5,11 +5,13 @@ import be.kdg.sa.deliveryservice.domain.delivery.Delivery;
 import be.kdg.sa.deliveryservice.domain.delivery.DeliveryId;
 import be.kdg.sa.deliveryservice.domain.delivery.DeliveryRepository;
 import be.kdg.sa.deliveryservice.domain.delivery.DeliveryStatus;
+import be.kdg.sa.deliveryservice.infrastructure.courier.jpa.JpaCourierEntity;
 import be.kdg.sa.deliveryservice.infrastructure.courier.jpa.JpaCourierRepository;
 import be.kdg.sa.deliveryservice.infrastructure.delivery.jpa.JpaDeliveryEntity;
 import be.kdg.sa.deliveryservice.infrastructure.delivery.jpa.JpaDeliveryRepository;
 import org.springframework.stereotype.Repository;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
@@ -17,7 +19,6 @@ import java.util.Optional;
 public class DbDeliveryRepository implements DeliveryRepository {
 
     private final JpaDeliveryRepository jpaDeliveryRepository;
-    // todo this is not correct
     private final JpaCourierRepository jpaCourierRepository;
 
     public DbDeliveryRepository(JpaDeliveryRepository jpaCourierRepository, JpaCourierRepository jpaCourierRepository1) {
@@ -34,7 +35,7 @@ public class DbDeliveryRepository implements DeliveryRepository {
 
     @Override public List <Delivery> findAllByStatus(DeliveryStatus status) {
         return jpaDeliveryRepository.findAllByStatus(status.toString())
-                                    .orElse(List.of())
+                                    .orElse(Collections.emptyList())
                                     .stream()
                                     .map(JpaDeliveryEntity::toDomain)
                                     .toList();
@@ -46,9 +47,9 @@ public class DbDeliveryRepository implements DeliveryRepository {
                 .map(JpaDeliveryEntity::toDomain);
     }
 
-    @Override public List<Delivery> findDeliveriesFor(CourierId courierId) {
+    @Override public List<Delivery> findCompletedDeliveriesFor(CourierId courierId) {
         return this.jpaDeliveryRepository.findAllByCourierIdAndStatus(courierId.id(), "DELIVERED")
-                                         .orElse(List.of())
+                                         .orElse(Collections.emptyList())
                                          .stream()
                                          .map(JpaDeliveryEntity::toDomain)
                                          .toList();
@@ -56,7 +57,12 @@ public class DbDeliveryRepository implements DeliveryRepository {
 
     @Override
     public void save(Delivery delivery) {
-        JpaDeliveryEntity jpaDeliveryEntity = JpaDeliveryEntity.fromDomain(delivery, jpaCourierRepository);
+        JpaCourierEntity courier = Optional.ofNullable(delivery.getCourierId())
+                .flatMap(courierId -> jpaCourierRepository.findById(courierId.id()))
+                .orElse(null);
+
+        JpaDeliveryEntity jpaDeliveryEntity = JpaDeliveryEntity.fromDomain(delivery, courier);
         this.jpaDeliveryRepository.save(jpaDeliveryEntity);
+
     }
 }

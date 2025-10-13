@@ -4,11 +4,9 @@ import be.kdg.sa.deliveryservice.domain.courier.Courier;
 import be.kdg.sa.deliveryservice.domain.courier.CourierId;
 import be.kdg.sa.deliveryservice.domain.delivery.DeliveryId;
 import be.kdg.sa.deliveryservice.infrastructure.delivery.jpa.JpaDeliveryEntity;
-import be.kdg.sa.deliveryservice.infrastructure.delivery.jpa.JpaDeliveryRepository;
 import jakarta.persistence.*;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.UUID;
 
 @Entity
@@ -21,7 +19,7 @@ public class JpaCourierEntity {
 
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "current_delivery_id")
-    private JpaDeliveryEntity currentDeliveryId;
+    private JpaDeliveryEntity currentdelivery;
 
     @OneToMany(mappedBy = "courier", fetch = FetchType.LAZY)
     private List<JpaDeliveryEntity> pastDeliveries;
@@ -40,32 +38,17 @@ public class JpaCourierEntity {
         return id;
     }
 
-    public static JpaCourierEntity fromDomain(Courier courier, JpaDeliveryRepository deliveryRepository) {
+    public static JpaCourierEntity fromDomain(Courier courier, JpaDeliveryEntity currentDelivery, List<JpaDeliveryEntity> pastDeliveries) {
         JpaCourierEntity jpaCourierEntity = new JpaCourierEntity(courier.getId().id(), courier.getName());
-
-        if (courier.getCurrentDeliveryId() != null) {
-            // or throw an exception if delivery must exist
-            jpaCourierEntity.currentDeliveryId = deliveryRepository.findById(courier.getCurrentDeliveryId().id())
-                    .orElse(null);
-
-
-        }
-
-        jpaCourierEntity.pastDeliveries = courier.getPastDeliveries().stream()
-                .map(c -> deliveryRepository.findById(c.id()))
-//               the flatmap is the same as below. Using Optional.stream() which returns either empty stream or single-element stream
-//                  .filter(Optional::isPresent)
-//                  .map(Optional::get)
-                .flatMap(Optional::stream)
-                .toList();
-
+        jpaCourierEntity.currentdelivery = currentDelivery;
+        jpaCourierEntity.pastDeliveries = pastDeliveries;
         return jpaCourierEntity;
     }
 
     public Courier toDomain() {
         Courier courier = new Courier(new CourierId(this.id), this.name);
-        if (this.currentDeliveryId != null) {
-            courier.claim(new DeliveryId(this.currentDeliveryId.getId()));
+        if (this.currentdelivery != null) {
+            courier.claim(new DeliveryId(this.currentdelivery.getId()));
         }
         this.pastDeliveries.forEach(delivery ->
                 courier.addPastDelivery(new DeliveryId(delivery.getId()))

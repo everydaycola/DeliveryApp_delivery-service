@@ -6,7 +6,6 @@ import be.kdg.sa.deliveryservice.domain.delivery.DeliveryId;
 import be.kdg.sa.deliveryservice.domain.delivery.DeliveryStatus;
 import be.kdg.sa.deliveryservice.domain.order.OrderId;
 import be.kdg.sa.deliveryservice.infrastructure.courier.jpa.JpaCourierEntity;
-import be.kdg.sa.deliveryservice.infrastructure.courier.jpa.JpaCourierRepository;
 import jakarta.persistence.*;
 
 import java.time.LocalDateTime;
@@ -46,16 +45,10 @@ public class JpaDeliveryEntity {
         this.orderId = orderId;
     }
 
-    public static JpaDeliveryEntity fromDomain(Delivery delivery, JpaCourierRepository courierRepository) {
+    public static JpaDeliveryEntity fromDomain(Delivery delivery,  JpaCourierEntity jpaCourierEntity) {
         JpaDeliveryEntity jpaDeliveryEntity = new JpaDeliveryEntity(delivery.getId().id(), delivery.getOrderId().id());
 
-        // Set courier if delivery has one assigned
-        if (delivery.getCourierId() != null) {
-            // or throw an exception if courier must exist
-            jpaDeliveryEntity.courier = courierRepository.findById(delivery.getCourierId().id()).orElse(null);
-        }
-
-        // Set other properties
+        jpaDeliveryEntity.courier = jpaCourierEntity;
         jpaDeliveryEntity.status = delivery.getStatus().toString();
         jpaDeliveryEntity.startTime = delivery.getStartTime() == null ? null : delivery.getStartTime();
         jpaDeliveryEntity.endTime = delivery.getEndTime() == null ? null : delivery.getEndTime();
@@ -83,11 +76,6 @@ public class JpaDeliveryEntity {
         };
 
         return delivery;
-    }
-
-    // Add getter and setter for courier
-    public JpaCourierEntity getCourier() {
-        return courier;
     }
 
     public void setCourier(JpaCourierEntity courier) {

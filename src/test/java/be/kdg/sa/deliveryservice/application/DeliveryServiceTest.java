@@ -156,7 +156,7 @@ class DeliveryServiceTest {
         deliveries.add(delivery1);
         deliveries.add(delivery2);
 
-        given(deliveryRepository.findDeliveriesFor(courierId)).willReturn(deliveries);
+        given(deliveryRepository.findCompletedDeliveriesFor(courierId)).willReturn(deliveries);
 
         // act
         var result = sut.findCompletedDeliveries(courierId);
