@@ -27,6 +27,12 @@ import static org.mockito.Mockito.*;
 @ExtendWith(MockitoExtension.class)
 class DeliveryServiceTest {
 
+    private static final OrderId orderId = OrderId.create();
+    private static final OrderId orderId2 = OrderId.create();
+    private static final CourierId courierId = CourierId.create();
+    private static final DeliveryId deliveryId = DeliveryId.create();
+    private static final DeliveryId deliveryId2 = DeliveryId.create();
+
     @Mock
     private CourierRepository courierRepository;
 
@@ -39,12 +45,7 @@ class DeliveryServiceTest {
     @Test
     void FindAllShouldReturnListOfDeliveries() {
         // arrange
-        DeliveryId deliveryId1 = DeliveryId.create();
-        DeliveryId deliveryId2 = DeliveryId.create();
-        OrderId orderId1 = OrderId.create();
-        OrderId orderId2 = OrderId.create();
-
-        Delivery delivery1 = new Delivery(deliveryId1, orderId1);
+        Delivery delivery1 = new Delivery(deliveryId, orderId);
         Delivery delivery2 = new Delivery(deliveryId2, orderId2);
 
         List<Delivery> deliveries = new ArrayList<>();
@@ -66,7 +67,6 @@ class DeliveryServiceTest {
     @Test
     void findCourierByIdShouldReturnCourier() {
         // arrange
-        CourierId courierId = CourierId.create();
         Courier courier = new Courier(courierId, "John");
 
         given(courierRepository.findById(courierId)).willReturn(Optional.of(courier));
@@ -82,8 +82,6 @@ class DeliveryServiceTest {
     @Test
     void findCourierByIdShouldThrowExceptionWhenCourierNotFound() {
         // arrange
-        CourierId courierId = CourierId.create();
-
         given(courierRepository.findById(courierId)).willReturn(Optional.empty());
 
         // act & assert
@@ -96,9 +94,7 @@ class DeliveryServiceTest {
     @Test
     void claimShouldClaimDeliveryAndSaveBothAndReturnDelivery() {
         // arrange
-        DeliveryId deliveryId = DeliveryId.create();
-        CourierId courierId = CourierId.create();
-        Delivery delivery = new Delivery(deliveryId, OrderId.create());
+        Delivery delivery = new Delivery(deliveryId, orderId);
         Courier courier = new Courier(courierId, "John");
 
         given(courierRepository.findById(courierId)).willReturn(Optional.of(courier));
@@ -120,8 +116,6 @@ class DeliveryServiceTest {
     @Test
     void claimShouldThrowExceptionWhenDeliveryNotFound() {
         // arrange
-        DeliveryId deliveryId = DeliveryId.create();
-        CourierId courierId = CourierId.create();
         Courier courier = new Courier(courierId, "John");
 
         given(deliveryRepository.findById(deliveryId)).willReturn(Optional.empty());
@@ -138,8 +132,6 @@ class DeliveryServiceTest {
     @Test
     void claimShouldThrowExceptionWhenCourierNotFound() {
         // arrange
-        DeliveryId deliveryId = DeliveryId.create();
-        CourierId courierId = CourierId.create();
         Delivery delivery = new Delivery(deliveryId, OrderId.create());
 
         given(courierRepository.findById(courierId)).willReturn(Optional.empty());
@@ -157,13 +149,7 @@ class DeliveryServiceTest {
     @Test
     void findCompletedDeliveries() {
         // arrange
-        DeliveryId deliveryId1 = DeliveryId.create();
-        DeliveryId deliveryId2 = DeliveryId.create();
-        OrderId orderId1 = OrderId.create();
-        OrderId orderId2 = OrderId.create();
-        CourierId courierId = CourierId.create();
-
-        Delivery delivery1 = new Delivery(deliveryId1, orderId1);
+        Delivery delivery1 = new Delivery(deliveryId, orderId);
         Delivery delivery2 = new Delivery(deliveryId2, orderId2);
 
         List<Delivery> deliveries = new ArrayList<>();
@@ -184,12 +170,7 @@ class DeliveryServiceTest {
     @Test
     void findAllUnclaimedShouldReturnListOfDeliveries() {
         // arrange
-        DeliveryId deliveryId1 = DeliveryId.create();
-        DeliveryId deliveryId2 = DeliveryId.create();
-        OrderId orderId1 = OrderId.create();
-        OrderId orderId2 = OrderId.create();
-
-        Delivery delivery1 = new Delivery(deliveryId1, orderId1);
+        Delivery delivery1 = new Delivery(deliveryId, orderId);
         Delivery delivery2 = new Delivery(deliveryId2, orderId2);
 
         List<Delivery> deliveries = new ArrayList<>();
@@ -210,8 +191,6 @@ class DeliveryServiceTest {
     @Test
     void unClaimShouldUnClaimBothAndSaveBothAndReturnCourier() {
         // arrange
-        DeliveryId deliveryId = DeliveryId.create();
-        CourierId courierId = CourierId.create();
         Delivery delivery = new Delivery(deliveryId, OrderId.create());
         Courier courier = new Courier(courierId, "John");
 
@@ -237,8 +216,6 @@ class DeliveryServiceTest {
     @Test
     void unClaimShouldThrowExceptionWhenCourierNotFound() {
         // arrange
-        DeliveryId deliveryId = DeliveryId.create();
-        CourierId courierId = CourierId.create();
         Delivery delivery = new Delivery(deliveryId, OrderId.create());
 
         delivery.claim(courierId);
@@ -257,8 +234,6 @@ class DeliveryServiceTest {
     @Test
     void unClaimShouldThrowExceptionWhenDeliveryNotFound() {
         // arrange
-        DeliveryId deliveryId = DeliveryId.create();
-        CourierId courierId = CourierId.create();
         Courier courier = new Courier(courierId, "John");
 
         courier.claim(deliveryId);
@@ -276,9 +251,6 @@ class DeliveryServiceTest {
     @Test
     void readyShouldSetDeliveryToReadyAndSaveDeliveryAndReturnDelivery() {
         // arrange
-        DeliveryId deliveryId = DeliveryId.create();
-        OrderId orderId = OrderId.create();
-        CourierId courierId = CourierId.create();
         Delivery delivery = new Delivery(deliveryId, orderId);
         delivery.claim(courierId);
 
@@ -299,9 +271,6 @@ class DeliveryServiceTest {
     @Test
     void readyShouldThrowExceptionWhenDeliveryNotFound() {
         // arrange
-        DeliveryId deliveryId = DeliveryId.create();
-        OrderId orderId = OrderId.create();
-        CourierId courierId = CourierId.create();
         Delivery delivery = new Delivery(deliveryId, orderId);
         delivery.claim(courierId);
 
@@ -317,9 +286,6 @@ class DeliveryServiceTest {
     @Test
     void pickupShouldSetDeliveryToReadyAndSaveDeliveryAndReturnDelivery() {
         // arrange
-        DeliveryId deliveryId = DeliveryId.create();
-        OrderId orderId = OrderId.create();
-        CourierId courierId = CourierId.create();
         Delivery delivery = new Delivery(deliveryId, orderId);
         delivery.claim(courierId);
         delivery.setReadyNow();
@@ -340,9 +306,6 @@ class DeliveryServiceTest {
     @Test
     void pickupShouldThrowExceptionWhenDeliveryNotFound() {
         // arrange
-        DeliveryId deliveryId = DeliveryId.create();
-        OrderId orderId = OrderId.create();
-        CourierId courierId = CourierId.create();
         Delivery delivery = new Delivery(deliveryId, orderId);
         delivery.claim(courierId);
         delivery.setReadyNow();
@@ -359,9 +322,6 @@ class DeliveryServiceTest {
     @Test
     void deliverShouldSetDeliveryToReadyAndSaveDeliveryAndReturnDelivery() {
         // arrange
-        DeliveryId deliveryId = DeliveryId.create();
-        OrderId orderId = OrderId.create();
-        CourierId courierId = CourierId.create();
         Delivery delivery = new Delivery(deliveryId, orderId);
         Courier courier = new Courier(courierId, "John");
         delivery.claim(courierId);
@@ -389,9 +349,6 @@ class DeliveryServiceTest {
     @Test
     void deliverShouldThrowExceptionWhenDeliveryNotFound() {
         // arrange
-        DeliveryId deliveryId = DeliveryId.create();
-        OrderId orderId = OrderId.create();
-        CourierId courierId = CourierId.create();
         Delivery delivery = new Delivery(deliveryId, orderId);
         delivery.claim(courierId);
         delivery.setReadyNow();
@@ -413,9 +370,6 @@ class DeliveryServiceTest {
     @Test
     void deliverShouldThrowExceptionWhenCourierNotFound() {
         // arrange
-        DeliveryId deliveryId = DeliveryId.create();
-        OrderId orderId = OrderId.create();
-        CourierId courierId = CourierId.create();
         Delivery delivery = new Delivery(deliveryId, orderId);
         delivery.claim(courierId);
         delivery.setReadyNow();
@@ -438,8 +392,6 @@ class DeliveryServiceTest {
     @Test
     void findDeliveryShouldReturnDelivery() {
         // arrange
-        DeliveryId deliveryId = DeliveryId.create();
-        OrderId orderId = OrderId.create();
         Delivery delivery = new Delivery(deliveryId, orderId);
 
         given(deliveryRepository.findById(deliveryId)).willReturn(Optional.of(delivery));
@@ -454,9 +406,6 @@ class DeliveryServiceTest {
     @Test
     void findDeliveryShouldThrowExceptionWhenDeliveryNotFound() {
         // arrange
-        DeliveryId deliveryId = DeliveryId.create();
-        OrderId orderId = OrderId.create();
-
         given(deliveryRepository.findById(deliveryId)).willReturn(Optional.empty());
 
         // act & assert
