@@ -1,6 +1,5 @@
 package be.kdg.sa.deliveryservice.domain.delivery;
 
-import be.kdg.sa.deliveryservice.domain.courier.Courier;
 import be.kdg.sa.deliveryservice.domain.courier.CourierId;
 import be.kdg.sa.deliveryservice.domain.order.OrderId;
 import org.junit.jupiter.api.BeforeAll;
@@ -43,12 +42,12 @@ class DeliveryTest {
     }
 
     @Test
-    void setPayoutShouldSucceed() {
+    void overRidePaymentShouldSucceed() {
         // arrange
         double amount = 12.34;
 
         // act
-        delivery.setPayout(amount);
+        delivery.overRidePayment(amount);
 
         // assert
         assertThat(delivery.getPayout()).isEqualTo(amount);

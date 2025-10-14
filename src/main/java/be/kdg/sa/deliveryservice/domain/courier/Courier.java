@@ -1,6 +1,7 @@
 package be.kdg.sa.deliveryservice.domain.courier;
 
 import be.kdg.sa.deliveryservice.domain.delivery.DeliveryId;
+import lombok.Getter;
 import org.jmolecules.ddd.annotation.Entity;
 
 import java.util.ArrayList;
@@ -8,9 +9,12 @@ import java.util.List;
 
 @Entity
 public class Courier {
+    @Getter
     private final CourierId id;
     private DeliveryId currentDelivery;
+    @Getter
     private final List <DeliveryId> pastDeliveries;
+    @Getter
     private final String name;
     // some field to link it to the identity class
 
@@ -25,12 +29,6 @@ public class Courier {
     public DeliveryId getCurrentDeliveryId() {
         return currentDelivery;
     }
-
-    public CourierId getId() {
-        return id;
-    }
-
-    public List<DeliveryId> getPastDeliveries() {return pastDeliveries;}
 
     public void addPastDelivery(DeliveryId deliveryId) {
         this.pastDeliveries.add(deliveryId);
@@ -60,7 +58,4 @@ public class Courier {
         this.currentDelivery = null;
     }
 
-    public String getName() {
-        return name;
-    }
 }
