@@ -5,6 +5,7 @@ import be.kdg.sa.deliveryservice.domain.courier.CourierId;
 import be.kdg.sa.deliveryservice.domain.delivery.DeliveryId;
 import be.kdg.sa.deliveryservice.infrastructure.delivery.jpa.JpaDeliveryEntity;
 import jakarta.persistence.*;
+import lombok.Getter;
 
 import java.util.List;
 import java.util.UUID;
@@ -12,6 +13,7 @@ import java.util.UUID;
 @Entity
 @Table(name = "Couriers")
 public class JpaCourierEntity {
+    @Getter
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     @Column
@@ -32,10 +34,6 @@ public class JpaCourierEntity {
     public JpaCourierEntity(UUID id, String name) {
         this.id = id;
         this.name = name;
-    }
-
-    public UUID getId() {
-        return id;
     }
 
     public static JpaCourierEntity fromDomain(Courier courier, JpaDeliveryEntity currentDelivery, List<JpaDeliveryEntity> pastDeliveries) {

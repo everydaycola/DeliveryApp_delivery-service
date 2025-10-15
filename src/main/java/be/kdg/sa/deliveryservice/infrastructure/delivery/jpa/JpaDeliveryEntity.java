@@ -7,6 +7,8 @@ import be.kdg.sa.deliveryservice.domain.delivery.DeliveryStatus;
 import be.kdg.sa.deliveryservice.domain.order.OrderId;
 import be.kdg.sa.deliveryservice.infrastructure.courier.jpa.JpaCourierEntity;
 import jakarta.persistence.*;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.time.LocalDateTime;
 import java.util.UUID;
@@ -14,6 +16,7 @@ import java.util.UUID;
 @Entity
 @Table(name = "Deliveries")
 public class JpaDeliveryEntity {
+    @Getter
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     @Column
@@ -22,6 +25,7 @@ public class JpaDeliveryEntity {
     @Column(nullable = false)
     private UUID orderId;
 
+    @Setter
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "courier_id")
     private JpaCourierEntity courier;
@@ -57,10 +61,6 @@ public class JpaDeliveryEntity {
         return jpaDeliveryEntity;
     }
 
-    public UUID getId() {
-        return id;
-    }
-
     public Delivery toDomain() {
 
         DeliveryStatus status = DeliveryStatus.valueOf(this.status);
@@ -72,13 +72,10 @@ public class JpaDeliveryEntity {
         if (status.getPhase() >= 3) delivery.pickUp();
         if (status.getPhase() >= 4) {
             delivery.finishAt(this.endTime);
-            delivery.setPayout(this.payout);
+            delivery.overRidePayment(this.payout);
         };
 
         return delivery;
     }
 
-    public void setCourier(JpaCourierEntity courier) {
-        this.courier = courier;
-    }
 }

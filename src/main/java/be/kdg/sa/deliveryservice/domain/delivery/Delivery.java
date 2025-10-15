@@ -2,11 +2,13 @@ package be.kdg.sa.deliveryservice.domain.delivery;
 
 import be.kdg.sa.deliveryservice.domain.courier.CourierId;
 import be.kdg.sa.deliveryservice.domain.order.OrderId;
+import lombok.Getter;
 import org.jmolecules.ddd.annotation.Entity;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
 
+@Getter
 @Entity public class Delivery {
 
     private static final double BASE_PAYOUT = 3;
@@ -74,35 +76,7 @@ import java.time.LocalDateTime;
         return BASE_PAYOUT + (PER_MINUTE_PAYOUT * Math.clamp(minutes, MINIMUM_MINUTES, MAXIMUM_MINUTES));
     }
 
-    public void setPayout(double payout) {
+    public void overRidePayment(double payout) {
         this.payout = payout;
-    }
-
-    public DeliveryId getId() {
-        return id;
-    }
-
-    public OrderId getOrderId() {
-        return orderId;
-    }
-
-    public CourierId getCourierId() {
-        return courierId;
-    }
-
-    public DeliveryStatus getStatus() {
-        return status;
-    }
-
-    public LocalDateTime getStartTime() {
-        return startTime;
-    }
-
-    public LocalDateTime getEndTime() {
-        return endTime;
-    }
-
-    public double getPayout() {
-        return payout;
     }
 }

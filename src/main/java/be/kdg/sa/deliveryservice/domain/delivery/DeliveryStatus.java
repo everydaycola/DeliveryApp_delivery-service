@@ -1,5 +1,8 @@
 package be.kdg.sa.deliveryservice.domain.delivery;
 
+import lombok.Getter;
+
+@Getter
 public enum DeliveryStatus {
     UNCLAIMED(0),
     CLAIMED(1),
@@ -25,7 +28,4 @@ public enum DeliveryStatus {
         }
     }
 
-    public int getPhase() {
-        return phase;
-    }
 }
