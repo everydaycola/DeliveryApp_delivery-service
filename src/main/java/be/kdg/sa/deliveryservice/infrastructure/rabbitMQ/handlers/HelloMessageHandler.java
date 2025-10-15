@@ -12,12 +12,12 @@ public class HelloMessageHandler {
 
     private static final Logger log = LoggerFactory.getLogger(HelloMessageHandler.class);
 
-    @RabbitListener(queues = RabbitMQTopology.HELLO_QUEUE_NAME)
+    @RabbitListener(queues = RabbitMQTopology.RESTAURANT_QUEUE_NAME)
     void onHelloMessageReceived(HelloMessage message) {
         log.info("hello: {}", message);
     }
 
-    @RabbitListener(queues = RabbitMQTopology.SOMETHING_QUEUE_NAME)
+    @RabbitListener(queues = RabbitMQTopology.ORDER_QUEUE_NAME)
     void onSomethingMessageReceived(HelloMessage message) {
         log.info("something: {}", message);
     }
