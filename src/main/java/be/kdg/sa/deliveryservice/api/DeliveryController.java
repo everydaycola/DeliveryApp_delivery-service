@@ -46,6 +46,17 @@ public class DeliveryController {
         return ResponseEntity.ok(DeliveryDto.from(deliveries.findDelivery(new DeliveryId(id))));
     }
 
+    @PostMapping("/{deliveryId}/claim/{courierId}")
+    public ResponseEntity<DeliveryDto> claim(@PathVariable("deliveryId") final UUID deliveryUUID,
+                                             @PathVariable("courierId") final UUID courierUUID) {
+        final DeliveryId deliveryId = new DeliveryId(deliveryUUID);
+        final CourierId courierId = new CourierId(courierUUID);
+        final Delivery delivery = deliveries.claim(deliveryId, courierId);
+        final DeliveryDto dto = DeliveryDto.from(delivery);
+        return ResponseEntity.ok(dto);
+    }
+
+    // this method should not exist and needs to be moved to message controller to be spoken to by restaurant
     @PostMapping("/{id}/ready")
     public ResponseEntity<DeliveryDto> setReady(@PathVariable final UUID id) {
         final DeliveryId deliveryId = new DeliveryId(id);
