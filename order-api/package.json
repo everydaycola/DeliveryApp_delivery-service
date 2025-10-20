@@ -1,9 +1,0 @@
-{
-  "name": "product-catalog-api",
-  "scripts": {
-    "server": "json-server db.json"
-  },
-  "dependencies": {
-    "json-server": "^1.0.0-beta.3"
-  }
-}
