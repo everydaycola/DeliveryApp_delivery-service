@@ -1,5 +1,7 @@
-@courier1=550e8400-e29b-41d4-a716-446655440001
-@courier2=550e8400-e29b-41d4-a716-446655440002
+@courier1username=iljanachtergaele
+@courier1password=courier
+@courier2username=stijnsimilon
+@courier2password=courier
 @delivery1=770e8400-e29b-41d4-a716-446655440001
 @delivery2=770e8400-e29b-41d4-a716-446655440002
 @delivery3=770e8400-e29b-41d4-a716-446655440003
@@ -8,44 +10,78 @@
 @delivery6=770e8400-e29b-41d4-a716-446655440006
 
 
-### GET request for all deliveries
-GET http://localhost:8082/api/deliveries
+### Get access token for courier1
+POST http://localhost:8180/realms/keepdishesgoing/protocol/openid-connect/token HTTP/1.1
+Content-Type: application/x-www-form-urlencoded
+
+client_id=keepdishesgoing&client_secret=GXg3zjaA8qrRFWFU06yhLrvLVI877xYE&username={{courier1username}}&password={{courier1password}}&grant_type=password&scope=openid
+
+> {%
+    client.global.set("access_token_courier1", response.body.access_token);
+%}
+
+### Get access token for courier2
+POST http://localhost:8180/realms/keepdishesgoing/protocol/openid-connect/token HTTP/1.1
+Content-Type: application/x-www-form-urlencoded
+
+client_id=keepdishesgoing&client_secret=GXg3zjaA8qrRFWFU06yhLrvLVI877xYE&username={{courier2username}}&password={{courier2password}}&grant_type=password&scope=openid
+
+> {%
+    client.global.set("access_token_courier2", response.body.access_token);
+%}
 
 ### GET request for all unclaimed deliveries
 GET http://localhost:8082/api/deliveries/unclaimed
+Authorization: Bearer {{access_token_courier1}}
 
 ### Get request for single delivery
 GET http://localhost:8082/api/deliveries/{{delivery5}}
+Authorization: Bearer {{access_token_courier1}}
 
 ### GET request for courier 1
-GET http://localhost:8082/api/couriers/{{courier1}}
+GET http://localhost:8082/api/couriers
+Authorization: Bearer {{access_token_courier1}}
 
 ### GET request for courier 2
-GET http://localhost:8082/api/couriers/{{courier2}}
+GET http://localhost:8082/api/couriers
+Authorization: Bearer {{access_token_courier2}}
+
+### GET request with wrong token
+GET http://localhost:8082/api/couriers
+Authorization: Bearer WRONG.TOKEN
 
 ### GET request for courier 1 past deliveries
-GET http://localhost:8082/api/couriers/{{courier1}}/completed
+GET http://localhost:8082/api/couriers/completed
+Authorization: Bearer {{access_token_courier1}}
 
 ### GET request for courier 2 past deliveries
-GET http://localhost:8082/api/couriers/{{courier2}}/completed
+GET http://localhost:8082/api/couriers/completed
+Authorization: Bearer {{access_token_courier2}}
 
 ### POST request to claim delivery as courier
-POST http://localhost:8082/api/deliveries/{{delivery5}}/claim/{{courier1}}
+POST http://localhost:8082/api/deliveries/{{delivery5}}/claim
+Authorization: Bearer {{access_token_courier1}}
 
 ### POST request to claim delivery as courier (Use it to try and claim a delivery when you already have one)
-POST http://localhost:8082/api/deliveries/{{delivery6}}/claim/{{courier1}}
+POST http://localhost:8082/api/deliveries/{{delivery6}}/claim
+Authorization: Bearer {{access_token_courier1}}
 
 ### POST request to claim an already claimed delivery
-POST http://localhost:8082/api/deliveries/{{delivery1}}/claim/{{courier1}}
+POST http://localhost:8082/api/deliveries/{{delivery1}}/claim
+Authorization: Bearer {{access_token_courier1}}
 
 ### POST request to unclaim your claimed delivery
-POST http://localhost:8082/api/couriers/{{courier1}}/unclaim
+POST http://localhost:8082/api/couriers/unclaim
+Authorization: Bearer {{access_token_courier1}}
 
 ### POST request set delivery ready for pickup (Should only be preformed via order by restaurant)
 POST http://localhost:8082/api/deliveries/{{delivery5}}/ready
+Authorization: Bearer {{access_token_courier1}}
 
 ### POST request set delivery as picked up and on the way (IN_DELIVERY)
 POST http://localhost:8082/api/deliveries/{{delivery5}}/pickup
+Authorization: Bearer {{access_token_courier1}}
 
 ### POST request set delivery as delivered and calculate the payout.
 POST http://localhost:8082/api/deliveries/{{delivery5}}/deliver
+Authorization: Bearer {{access_token_courier1}}

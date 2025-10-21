@@ -25,10 +25,6 @@ public class DeliveryService {
         this.couriers = couriers;
     }
 
-    public List<Delivery> findAll() {
-        return deliveries.findAll();
-    }
-
     public Courier findCourierById(final CourierId courierId) {
         return couriers.findById(courierId)
                 .orElseThrow(courierId::notFound);
@@ -57,29 +53,33 @@ public class DeliveryService {
         final DeliveryId oldDeliveryId = courier.unClaim();
         final Delivery delivery = deliveries.findById(oldDeliveryId)
                 .orElseThrow(() -> new NotFoundException("Previously claimed delivery not found"));
+        delivery.authenticate(courierId);
         delivery.unClaim();
         couriers.save(courier);
         deliveries.save(delivery);
         return courier;
     }
 
-    public Delivery ready(DeliveryId deliveryId) {
+    public Delivery ready(DeliveryId deliveryId, CourierId courierId) {
         final Delivery delivery = deliveries.findById(deliveryId).orElseThrow(deliveryId::notFound);
+        delivery.authenticate(courierId);
         delivery.setReadyNow();
         deliveries.save(delivery);
         return delivery;
     }
 
-    public Delivery pickup(DeliveryId deliveryId) {
+    public Delivery pickup(DeliveryId deliveryId, CourierId courierId) {
         final Delivery delivery = deliveries.findById(deliveryId).orElseThrow(deliveryId::notFound);
+        delivery.authenticate(courierId);
         delivery.pickUp();
         deliveries.save(delivery);
         return delivery;
     }
 
-    public Delivery deliver(DeliveryId deliveryId) {
+    public Delivery deliver(DeliveryId deliveryId, CourierId courierId) {
         final Delivery delivery = deliveries.findById(deliveryId).orElseThrow(deliveryId::notFound);
         final Courier courier = couriers.findById(delivery.getCourierId()).orElseThrow(delivery.getCourierId()::notFound);
+        delivery.authenticate(courierId);
         delivery.finishNow();
         courier.finishDelivery();
         deliveries.save(delivery);
@@ -87,8 +87,10 @@ public class DeliveryService {
         return delivery;
     }
 
-    public Delivery findDelivery(DeliveryId deliveryId) {
-        return deliveries.findById(deliveryId)
+    public Delivery findDelivery(DeliveryId deliveryId, CourierId courierId) {
+        Delivery delivery = deliveries.findById(deliveryId)
                 .orElseThrow(deliveryId::notFound);
+        delivery.authenticate(courierId);
+        return delivery;
     }
 }

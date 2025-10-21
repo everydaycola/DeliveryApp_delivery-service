@@ -26,13 +26,6 @@ public class DbDeliveryRepository implements DeliveryRepository {
         this.jpaCourierRepository = jpaCourierRepository1;
     }
 
-    @Override
-    public List<Delivery> findAll() {
-        return jpaDeliveryRepository.findAll().stream()
-                .map(JpaDeliveryEntity::toDomain)
-                .toList();
-    }
-
     @Override public List <Delivery> findAllByStatus(DeliveryStatus status) {
         return jpaDeliveryRepository.findAllByStatus(status.toString())
                                     .orElse(Collections.emptyList())

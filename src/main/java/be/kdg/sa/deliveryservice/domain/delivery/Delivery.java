@@ -76,6 +76,12 @@ import java.time.LocalDateTime;
         return BASE_PAYOUT + (PER_MINUTE_PAYOUT * Math.clamp(minutes, MINIMUM_MINUTES, MAXIMUM_MINUTES));
     }
 
+    public void authenticate(CourierId courierId) {
+        if (this.courierId != null && !this.courierId.equals(courierId)) {
+            throw new IllegalStateException("Courier " + courierId.toString() + " does not own delivery " + this.id.toString());
+        }
+    }
+
     public void overRidePayment(double payout) {
         this.payout = payout;
     }

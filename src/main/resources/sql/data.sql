@@ -4,28 +4,28 @@ SET session_replication_role = 'replica';
 -- Seed Couriers
 -- Courier 1 - no active delivery (current_delivery_id is NULL)
 INSERT INTO couriers (id, current_delivery_id, name)
-VALUES ('550e8400-e29b-41d4-a716-446655440001', NULL, 'Ilja Nachtergaele');
+VALUES ('51773c15-5739-4251-bed4-617faa0c2573', NULL, 'Ilja Nachtergaele');
 
 -- Courier 2 - has active delivery (Delivery4Id)
 INSERT INTO couriers (id, current_delivery_id, name)
-VALUES ('550e8400-e29b-41d4-a716-446655440002', '770e8400-e29b-41d4-a716-446655440004',  'Stijn Similon');
+VALUES ('13416cb1-b19c-409d-a93f-1754bc65b8c8', '770e8400-e29b-41d4-a716-446655440004',  'Stijn Similon');
 
 -- Seed Deliveries
 -- Delivery 1 - successful delivery by courier 2
 INSERT INTO deliveries (id, order_id, courier_id, status, start_time, end_time, payout)
-VALUES ('770e8400-e29b-41d4-a716-446655440001', '660e8400-e29b-41d4-a716-446655440001', '550e8400-e29b-41d4-a716-446655440002',  'DELIVERED', '2025-10-01 12:00:00', '2025-10-01 12:12:56', 6.6);
+VALUES ('770e8400-e29b-41d4-a716-446655440001', '660e8400-e29b-41d4-a716-446655440001', '13416cb1-b19c-409d-a93f-1754bc65b8c8',  'DELIVERED', '2025-10-01 12:00:00', '2025-10-01 12:12:56', 6.6);
 
 -- Delivery 2 - successful delivery by courier 2
 INSERT INTO deliveries (id, order_id, courier_id, status, start_time, end_time, payout)
-VALUES ('770e8400-e29b-41d4-a716-446655440002', '660e8400-e29b-41d4-a716-446655440002', '550e8400-e29b-41d4-a716-446655440002', 'DELIVERED', '2025-10-03 12:00:00', '2025-10-03 12:20:56', 9.0);
+VALUES ('770e8400-e29b-41d4-a716-446655440002', '660e8400-e29b-41d4-a716-446655440002', '13416cb1-b19c-409d-a93f-1754bc65b8c8', 'DELIVERED', '2025-10-03 12:00:00', '2025-10-03 12:20:56', 9.0);
 
 -- Delivery 3 - successful delivery by courier 1
 INSERT INTO deliveries (id, order_id, courier_id, status, start_time, end_time, payout)
-VALUES ('770e8400-e29b-41d4-a716-446655440003', '660e8400-e29b-41d4-a716-446655440003', '550e8400-e29b-41d4-a716-446655440001', 'DELIVERED', '2025-10-05 12:00:00', '2025-10-05 12:01:56', 4.5);
+VALUES ('770e8400-e29b-41d4-a716-446655440003', '660e8400-e29b-41d4-a716-446655440003', '51773c15-5739-4251-bed4-617faa0c2573', 'DELIVERED', '2025-10-05 12:00:00', '2025-10-05 12:01:56', 4.5);
 
 -- Delivery 4 - active delivery by courier 2 (not successful yet)
 INSERT INTO deliveries (id, order_id, courier_id, status, start_time, payout)
-VALUES ('770e8400-e29b-41d4-a716-446655440004', '660e8400-e29b-41d4-a716-446655440004', '550e8400-e29b-41d4-a716-446655440002', 'READY_FOR_PICKUP', '2025-10-08 12:00:00', 0);
+VALUES ('770e8400-e29b-41d4-a716-446655440004', '660e8400-e29b-41d4-a716-446655440004', '13416cb1-b19c-409d-a93f-1754bc65b8c8', 'READY_FOR_PICKUP', '2025-10-08 12:00:00', 0);
 
 -- Delivery 5 - unclaimed delivery (courier_id is NULL)
 INSERT INTO deliveries (id, order_id, courier_id, status, payout)

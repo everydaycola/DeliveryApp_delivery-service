@@ -10,13 +10,12 @@ import java.util.List;
 @Entity
 public class Courier {
     @Getter
-    private final CourierId id;
+    private final CourierId id; // same id as in keycloak
     private DeliveryId currentDelivery;
     @Getter
     private final List <DeliveryId> pastDeliveries;
     @Getter
     private final String name;
-    // some field to link it to the identity class
 
     public Courier(CourierId id, String name) {
         this.id = id;
