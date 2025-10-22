@@ -10,6 +10,7 @@ public class RabbitMQTopology {
     public static final String KDG_EXCHANGE_NAME = "kdg_exchange";
 
     public static final String ORDER_ACCEPTED_QUEUE_NAME= "delivery_order_accepted_queue";
+    public static final String ORDER_READY_QUEUE_NAME= "delivery_order_ready_queue";
 
     @Bean
     TopicExchange kdgExchange() {
@@ -22,8 +23,17 @@ public class RabbitMQTopology {
     }
 
     @Bean
+    Queue orderReadyQueue() {
+        return QueueBuilder.nonDurable(ORDER_READY_QUEUE_NAME).build();
+    }
+
+    @Bean
     Binding orderAcceptedBinding(TopicExchange kdgExchange) {
         return BindingBuilder.bind(orderAcceptedQueue()).to(kdgExchange).with("order.accepted.#");
     }
 
+    @Bean
+    Binding orderReadyBinding(){
+        return BindingBuilder.bind(orderReadyQueue()).to(kdgExchange()).with("order.ready");
+    }
 }
