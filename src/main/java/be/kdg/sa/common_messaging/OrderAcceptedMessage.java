@@ -1,4 +1,4 @@
-package be.kdg.sa.deliveryservice.infrastructure.rabbitMQ.messages;
+package be.kdg.sa.common_messaging;
 
 import be.kdg.sa.deliveryservice.api.OrderAcceptedDto;
 
