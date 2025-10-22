@@ -8,6 +8,7 @@ import be.kdg.sa.deliveryservice.domain.delivery.Delivery;
 import be.kdg.sa.deliveryservice.domain.delivery.DeliveryId;
 import be.kdg.sa.deliveryservice.domain.delivery.DeliveryRepository;
 import be.kdg.sa.deliveryservice.domain.delivery.DeliveryStatus;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -15,6 +16,7 @@ import java.util.List;
 
 @Service
 @Transactional
+@Slf4j
 public class DeliveryService {
 
     private final DeliveryRepository deliveries;
@@ -31,6 +33,7 @@ public class DeliveryService {
     }
 
     public Delivery claim(DeliveryId deliveryId, CourierId courierId) {
+        log.info("Claiming delivery with id: {}", deliveryId);
         final Delivery delivery = deliveries.findById(deliveryId).orElseThrow(deliveryId::notFound);
         final Courier courier = couriers.findById(courierId).orElseThrow(courierId::notFound);
         delivery.claim(courierId);
@@ -41,18 +44,20 @@ public class DeliveryService {
     }
 
     public List<Delivery> findCompletedDeliveries(CourierId courierId) {
+        log.info("Finding completed deliveries for courier with id: {}", courierId);
         return deliveries.findCompletedDeliveriesFor(courierId);
     }
 
     public List<Delivery> findAllUnclaimed() {
+        log.info("Finding all unclaimed deliveries");
         return deliveries.findAllByStatus(DeliveryStatus.UNCLAIMED);
     }
 
     public Courier unClaim(CourierId courierId) {
+        log.info("Un-claiming courier with id: {}", courierId);
         final Courier courier = couriers.findById(courierId).orElseThrow(courierId::notFound);
         final DeliveryId oldDeliveryId = courier.unClaim();
-        final Delivery delivery = deliveries.findById(oldDeliveryId)
-                .orElseThrow(() -> new NotFoundException("Previously claimed delivery not found"));
+        final Delivery delivery = deliveries.findById(oldDeliveryId).orElseThrow(oldDeliveryId::notFound);
         delivery.authenticate(courierId);
         delivery.unClaim();
         couriers.save(courier);
@@ -61,6 +66,7 @@ public class DeliveryService {
     }
 
     public Delivery ready(DeliveryId deliveryId, CourierId courierId) {
+        log.info("Setting delivery with id: {} to ready", deliveryId);
         final Delivery delivery = deliveries.findById(deliveryId).orElseThrow(deliveryId::notFound);
         delivery.authenticate(courierId);
         delivery.setReadyNow();
@@ -69,6 +75,7 @@ public class DeliveryService {
     }
 
     public Delivery pickup(DeliveryId deliveryId, CourierId courierId) {
+        log.info("Setting delivery with id: {} to in delivery", deliveryId);
         final Delivery delivery = deliveries.findById(deliveryId).orElseThrow(deliveryId::notFound);
         delivery.authenticate(courierId);
         delivery.pickUp();
@@ -77,6 +84,7 @@ public class DeliveryService {
     }
 
     public Delivery deliver(DeliveryId deliveryId, CourierId courierId) {
+        log.info("Setting delivery with id: {} to delivered", deliveryId);
         final Delivery delivery = deliveries.findById(deliveryId).orElseThrow(deliveryId::notFound);
         final Courier courier = couriers.findById(delivery.getCourierId()).orElseThrow(delivery.getCourierId()::notFound);
         delivery.authenticate(courierId);
@@ -88,8 +96,8 @@ public class DeliveryService {
     }
 
     public Delivery findDelivery(DeliveryId deliveryId, CourierId courierId) {
-        Delivery delivery = deliveries.findById(deliveryId)
-                .orElseThrow(deliveryId::notFound);
+        log.info("Finding delivery with id: {} for courier with id: {}", deliveryId, courierId);
+        Delivery delivery = deliveries.findById(deliveryId).orElseThrow(deliveryId::notFound);
         delivery.authenticate(courierId);
         return delivery;
     }

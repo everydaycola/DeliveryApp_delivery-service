@@ -1,10 +1,12 @@
 package be.kdg.sa.deliveryservice.api;
 
 import be.kdg.sa.deliveryservice.domain.delivery.Delivery;
+import lombok.extern.slf4j.Slf4j;
 
 import java.time.LocalDateTime;
 import java.util.UUID;
 
+@Slf4j
 public record DeliveryDto(
         UUID id,
         UUID orderId,
@@ -15,6 +17,7 @@ public record DeliveryDto(
         double payout
 ) {
     public static DeliveryDto from(final Delivery delivery) {
+        log.info("Creating DeliveryDto from delivery {}", delivery.getId());
         return new DeliveryDto(
                 delivery.getId().id(),
                 delivery.getOrderId().id(),

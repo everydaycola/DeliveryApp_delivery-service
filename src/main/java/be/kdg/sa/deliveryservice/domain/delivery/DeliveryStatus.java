@@ -1,8 +1,10 @@
 package be.kdg.sa.deliveryservice.domain.delivery;
 
 import lombok.Getter;
+import lombok.extern.slf4j.Slf4j;
 
 @Getter
+@Slf4j
 public enum DeliveryStatus {
     UNCLAIMED(0),
     CLAIMED(1),
@@ -21,7 +23,9 @@ public enum DeliveryStatus {
     }
 
     public void shouldBe(DeliveryStatus this, DeliveryStatus that ) {
+        log.info("Checking if status {} is {}", this.getName(), that.getName());
         if (!this.equals(that)) {
+            log.error("Delivery status should be {} but is {}", that.getName(), this.getName());
             throw new IllegalStateException(
                     "Delivery status should be " + that.getName() + " but is " + this.getName()
             );

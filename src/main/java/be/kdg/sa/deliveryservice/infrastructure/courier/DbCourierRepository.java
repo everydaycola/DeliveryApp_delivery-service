@@ -7,11 +7,13 @@ import be.kdg.sa.deliveryservice.infrastructure.courier.jpa.JpaCourierEntity;
 import be.kdg.sa.deliveryservice.infrastructure.courier.jpa.JpaCourierRepository;
 import be.kdg.sa.deliveryservice.infrastructure.delivery.jpa.JpaDeliveryEntity;
 import be.kdg.sa.deliveryservice.infrastructure.delivery.jpa.JpaDeliveryRepository;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Repository;
 
 import java.util.*;
 
 @Repository
+@Slf4j
 public class DbCourierRepository implements CourierRepository {
 
     private final JpaCourierRepository jpaCourierRepository;
@@ -24,12 +26,14 @@ public class DbCourierRepository implements CourierRepository {
 
     @Override
     public Optional<Courier> findById(CourierId CourierId) {
+        log.info("Finding courier with id {}", CourierId.id());
         return this.jpaCourierRepository.findById(CourierId.id())
                 .map(JpaCourierEntity::toDomain);
     }
 
     @Override
     public void save(Courier courier) {
+        log.info("Saving courier {}", courier.getId());
         JpaDeliveryEntity currentDelivery = Optional.ofNullable(courier.getCurrentDeliveryId())
                 .flatMap(deliveryId -> jpaDeliveryRepository.findById(deliveryId.id()))
                 .orElse(null);

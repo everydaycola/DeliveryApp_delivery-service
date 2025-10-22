@@ -4,6 +4,7 @@ import be.kdg.sa.deliveryservice.application.DeliveryService;
 import be.kdg.sa.deliveryservice.domain.courier.CourierId;
 import be.kdg.sa.deliveryservice.domain.delivery.Delivery;
 import be.kdg.sa.deliveryservice.domain.delivery.DeliveryId;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -14,6 +15,7 @@ import java.util.List;
 import java.util.UUID;
 
 @RestController
+@Slf4j
 @RequestMapping("/api/deliveries")
 @PreAuthorize("hasAuthority('courier')")
 public class DeliveryController {
@@ -25,6 +27,7 @@ public class DeliveryController {
 
     @GetMapping("/unclaimed")
     public ResponseEntity <List <DeliveryDto>> findAllUnclaimed() {
+        log.info("findAllUnclaimed");
         List <Delivery> foundDeliveries = this.deliveries.findAllUnclaimed();
 
         List <DeliveryDto> deliveryDtos = foundDeliveries.stream()
@@ -37,6 +40,7 @@ public class DeliveryController {
     @GetMapping("/{id}")
     public ResponseEntity <DeliveryDto> findDelivery(@PathVariable final UUID id,
                                                      @AuthenticationPrincipal Jwt token) {
+        log.info("findDelivery: {}", id);
         final CourierId courierId = new CourierId(UUID.fromString(token.getClaimAsString("databaseid")));
         DeliveryId deliveryId = new DeliveryId(id);
         return ResponseEntity.ok(DeliveryDto.from(deliveries.findDelivery(deliveryId, courierId)));
@@ -45,6 +49,7 @@ public class DeliveryController {
     @PostMapping("/{deliveryId}/claim")
     public ResponseEntity<DeliveryDto> claim(@PathVariable("deliveryId") final UUID deliveryUUID,
                                              @AuthenticationPrincipal Jwt token) {
+        log.info("claim: {}", deliveryUUID);
         final DeliveryId deliveryId = new DeliveryId(deliveryUUID);
         final CourierId courierId = new CourierId(UUID.fromString(token.getClaimAsString("databaseid")));
         final Delivery delivery = deliveries.claim(deliveryId, courierId);
@@ -55,6 +60,8 @@ public class DeliveryController {
     // this method should not exist and needs to be moved to message controller to be spoken to by restaurant
     @PostMapping("/{id}/ready")
     public ResponseEntity<DeliveryDto> setReady(@PathVariable final UUID id, @AuthenticationPrincipal Jwt token) {
+        log.info("setReady: {}", id);
+        log.warn("This method should not exist and needs to be moved to message controller to be spoken to by restaurant");
         final CourierId courierId = new CourierId(UUID.fromString(token.getClaimAsString("databaseid")));
         final DeliveryId deliveryId = new DeliveryId(id);
         final Delivery delivery = deliveries.ready(deliveryId, courierId);
@@ -64,6 +71,7 @@ public class DeliveryController {
 
     @PostMapping("/{id}/pickup")
     public ResponseEntity<DeliveryDto> setInDelivery(@PathVariable final UUID id, @AuthenticationPrincipal Jwt token) {
+        log.info("setInDelivery: {}", id);
         final CourierId courierId = new CourierId(UUID.fromString(token.getClaimAsString("databaseid")));
         final DeliveryId deliveryId = new DeliveryId(id);
         final Delivery delivery = deliveries.pickup(deliveryId, courierId);
@@ -73,6 +81,7 @@ public class DeliveryController {
 
     @PostMapping("/{id}/deliver")
     public ResponseEntity<DeliveryDto> setDelivered(@PathVariable final UUID id, @AuthenticationPrincipal Jwt token) {
+        log.info("setDelivered: {}", id);
         final CourierId courierId = new CourierId(UUID.fromString(token.getClaimAsString("databaseid")));
         final DeliveryId deliveryId = new DeliveryId(id);
         final Delivery delivery = deliveries.deliver(deliveryId, courierId);
