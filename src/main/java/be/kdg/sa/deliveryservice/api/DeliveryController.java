@@ -4,7 +4,11 @@ import be.kdg.sa.deliveryservice.application.DeliveryService;
 import be.kdg.sa.deliveryservice.domain.courier.CourierId;
 import be.kdg.sa.deliveryservice.domain.delivery.Delivery;
 import be.kdg.sa.deliveryservice.domain.delivery.DeliveryId;
+import be.kdg.sa.deliveryservice.infrastructure.rabbitMQ.RabbitMQTopology;
+import be.kdg.sa.deliveryservice.infrastructure.rabbitMQ.messages.OrderDeliveredMessage;
+import be.kdg.sa.deliveryservice.infrastructure.rabbitMQ.messages.OrderPickedUpMessage;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -20,9 +24,11 @@ import java.util.UUID;
 @PreAuthorize("hasAuthority('courier')")
 public class DeliveryController {
     private final DeliveryService deliveries;
+    private final RabbitTemplate rabbitTemplate;
 
-    public DeliveryController(DeliveryService deliveries) {
+    public DeliveryController(DeliveryService deliveries, RabbitTemplate rabbitTemplate) {
         this.deliveries = deliveries;
+        this.rabbitTemplate = rabbitTemplate;
     }
 
     @GetMapping("/unclaimed")
@@ -76,6 +82,9 @@ public class DeliveryController {
         final DeliveryId deliveryId = new DeliveryId(id);
         final Delivery delivery = deliveries.pickup(deliveryId, courierId);
         final DeliveryDto dto = DeliveryDto.from(delivery);
+
+        rabbitTemplate.convertAndSend(RabbitMQTopology.KDG_EXCHANGE_NAME,"order.pickedUp", new OrderPickedUpMessage(OrderPickedUpAndDeliveredDto.from(delivery)));
+
         return ResponseEntity.ok(dto);
     }
 
@@ -86,6 +95,9 @@ public class DeliveryController {
         final DeliveryId deliveryId = new DeliveryId(id);
         final Delivery delivery = deliveries.deliver(deliveryId, courierId);
         final DeliveryDto dto = DeliveryDto.from(delivery);
+
+        rabbitTemplate.convertAndSend(RabbitMQTopology.KDG_EXCHANGE_NAME,"order.delivered", new OrderDeliveredMessage(OrderPickedUpAndDeliveredDto.from(delivery)));
+
         return ResponseEntity.ok(dto);
     }
 }
