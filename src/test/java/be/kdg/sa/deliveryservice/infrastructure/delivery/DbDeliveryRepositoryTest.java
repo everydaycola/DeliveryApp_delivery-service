@@ -18,13 +18,10 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.*;
 
 import java.util.List;
 import java.util.Optional;
-import java.util.UUID;
 
 import static org.mockito.BDDMockito.given;
 
@@ -45,40 +42,6 @@ class DbDeliveryRepositoryTest {
 
     @InjectMocks
     private DbDeliveryRepository sut;
-
-    @Test
-    void findAllReturnsAllDeliveries() {
-        // arrange
-        Delivery delivery = new Delivery(deliveryId, orderId);
-        Delivery delivery2 = new Delivery(deliveryId2, orderId2);
-        JpaDeliveryEntity jpaDeliveryEntity = JpaDeliveryEntity.fromDomain(delivery, null);
-        JpaDeliveryEntity jpaDeliveryEntity2 = JpaDeliveryEntity.fromDomain(delivery2, null);
-
-        given(jpaDeliveryRepository.findAll()).willReturn(List.of(jpaDeliveryEntity, jpaDeliveryEntity2));
-
-        // act
-        var result = sut.findAll();
-
-        // assert
-        assertThat(result).hasSize(2);
-        assertCompareDeliveries(result.get(0), delivery);
-        assertCompareDeliveries(result.get(1), delivery2);
-        verify(jpaDeliveryRepository).findAll();
-    }
-
-    @Test
-    void findAllReturnsEmptyListWhenNoDeliveries() {
-        // arrange
-
-        given(jpaDeliveryRepository.findAll()).willReturn(List.of());
-
-        // act
-        var result = sut.findAll();
-
-        // assert
-        assertThat(result).isEmpty();
-        verify(jpaDeliveryRepository).findAll();
-    }
 
     @Test
     void findAllByStatusReturnsAllDeliveriesWithStatus() {

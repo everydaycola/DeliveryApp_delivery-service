@@ -7,14 +7,17 @@ import be.kdg.sa.deliveryservice.domain.delivery.DeliveryStatus;
 import be.kdg.sa.deliveryservice.domain.order.OrderId;
 import be.kdg.sa.deliveryservice.infrastructure.courier.jpa.JpaCourierEntity;
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
 
 import java.time.LocalDateTime;
+import java.util.Optional;
 import java.util.UUID;
 
 @Entity
 @Table(name = "Deliveries")
+@AllArgsConstructor
 public class JpaDeliveryEntity {
     @Getter
     @Id
@@ -44,38 +47,30 @@ public class JpaDeliveryEntity {
 
     protected JpaDeliveryEntity() {} // for JPA
 
-    public JpaDeliveryEntity(UUID id, UUID orderId) {
-        this.id = id;
-        this.orderId = orderId;
-    }
-
     public static JpaDeliveryEntity fromDomain(Delivery delivery,  JpaCourierEntity jpaCourierEntity) {
-        JpaDeliveryEntity jpaDeliveryEntity = new JpaDeliveryEntity(delivery.getId().id(), delivery.getOrderId().id());
-
-        jpaDeliveryEntity.courier = jpaCourierEntity;
-        jpaDeliveryEntity.status = delivery.getStatus().toString();
-        jpaDeliveryEntity.startTime = delivery.getStartTime() == null ? null : delivery.getStartTime();
-        jpaDeliveryEntity.endTime = delivery.getEndTime() == null ? null : delivery.getEndTime();
-        jpaDeliveryEntity.payout = delivery.getPayout();
-
-        return jpaDeliveryEntity;
+        return new JpaDeliveryEntity(
+                delivery.getId().id(),
+                delivery.getOrderId().id(),
+                jpaCourierEntity,
+                delivery.getStatus().toString(),
+                delivery.getStartTime() == null ? null : delivery.getStartTime(),
+                delivery.getEndTime() == null ? null : delivery.getEndTime(),
+                delivery.getPayout()
+        );
     }
 
     public Delivery toDomain() {
-
-        DeliveryStatus status = DeliveryStatus.valueOf(this.status);
-
-        Delivery delivery = new Delivery(new DeliveryId(this.id), new OrderId(this.orderId));
-
-        if (status.getPhase() >= 1) delivery.claim(new CourierId(this.courier.getId()));
-        if (status.getPhase() >= 2) delivery.setReadyAt(this.startTime);
-        if (status.getPhase() >= 3) delivery.pickUp();
-        if (status.getPhase() >= 4) {
-            delivery.finishAt(this.endTime);
-            delivery.overRidePayment(this.payout);
-        };
-
-        return delivery;
+        return new Delivery(
+                new DeliveryId(this.id),
+                new OrderId(this.orderId),
+                Optional.ofNullable(this.courier)
+                        .map(JpaCourierEntity::getId)
+                        .map(CourierId::new)
+                        .orElse(null),
+                DeliveryStatus.valueOf(this.status),
+                this.startTime,
+                this.endTime,
+                this.payout);
     }
 
 }

@@ -30,6 +30,7 @@ class DeliveryServiceTest {
     private static final OrderId orderId = OrderId.create();
     private static final OrderId orderId2 = OrderId.create();
     private static final CourierId courierId = CourierId.create();
+    private static final CourierId courierId2 = CourierId.create();
     private static final DeliveryId deliveryId = DeliveryId.create();
     private static final DeliveryId deliveryId2 = DeliveryId.create();
 
@@ -41,28 +42,6 @@ class DeliveryServiceTest {
 
     @InjectMocks
     private DeliveryService sut;
-
-    @Test
-    void FindAllShouldReturnListOfDeliveries() {
-        // arrange
-        Delivery delivery1 = new Delivery(deliveryId, orderId);
-        Delivery delivery2 = new Delivery(deliveryId2, orderId2);
-
-        List<Delivery> deliveries = new ArrayList<>();
-        deliveries.add(delivery1);
-        deliveries.add(delivery2);
-
-        given(deliveryRepository.findAll()).willReturn(deliveries);
-
-        // act
-        var result = sut.findAll();
-
-        // assert
-        assertThat(result).hasSize(2);
-        assertThat(result.get(0)).isEqualTo(delivery1);
-        assertThat(result.get(1)).isEqualTo(delivery2);
-        verify(deliveryRepository).findAll();
-    }
 
     @Test
     void findCourierByIdShouldReturnCourier() {
@@ -257,7 +236,7 @@ class DeliveryServiceTest {
         given(deliveryRepository.findById(deliveryId)).willReturn(Optional.of(delivery));
 
         // act
-        var result = sut.ready(deliveryId);
+        var result = sut.ready(deliveryId, courierId);
 
         // assert
         assertThat(result).isEqualTo(delivery);
@@ -278,7 +257,22 @@ class DeliveryServiceTest {
 
         // act & assert
         assertThrows(NotFoundException.class,
-                () -> sut.ready(deliveryId));
+                () -> sut.ready(deliveryId, courierId));
+
+        verify(deliveryRepository, never()).save(delivery);
+    }
+
+    @Test
+    void readyShouldThrowExceptionWhenWrongCourier() {
+        // arrange
+        Delivery delivery = new Delivery(deliveryId, orderId);
+        delivery.claim(courierId);
+
+        given(deliveryRepository.findById(deliveryId)).willReturn(Optional.of(delivery));
+
+        // act & assert
+        assertThrows(IllegalStateException.class,
+                () -> sut.ready(deliveryId, courierId2));
 
         verify(deliveryRepository, never()).save(delivery);
     }
@@ -293,7 +287,7 @@ class DeliveryServiceTest {
         given(deliveryRepository.findById(deliveryId)).willReturn(Optional.of(delivery));
 
         // act
-        var result = sut.pickup(deliveryId);
+        var result = sut.pickup(deliveryId, courierId);
 
         // assert
         assertThat(result).isEqualTo(delivery);
@@ -314,7 +308,23 @@ class DeliveryServiceTest {
 
         // act & assert
         assertThrows(NotFoundException.class,
-                () -> sut.pickup(deliveryId));
+                () -> sut.pickup(deliveryId, courierId));
+
+        verify(deliveryRepository, never()).save(delivery);
+    }
+
+    @Test
+    void pickupShouldThrowExceptionWhenWrongCourier() {
+        // arrange
+        Delivery delivery = new Delivery(deliveryId, orderId);
+        delivery.claim(courierId);
+        delivery.setReadyNow();
+
+        given(deliveryRepository.findById(deliveryId)).willReturn(Optional.of(delivery));
+
+        // act & assert
+        assertThrows(IllegalStateException.class,
+                () -> sut.pickup(deliveryId, courierId2));
 
         verify(deliveryRepository, never()).save(delivery);
     }
@@ -333,7 +343,7 @@ class DeliveryServiceTest {
         given(courierRepository.findById(courierId)).willReturn(Optional.of(courier));
 
         // act
-        var result = sut.deliver(deliveryId);
+        var result = sut.deliver(deliveryId, courierId);
 
         // assert
         assertThat(result).isEqualTo(delivery);
@@ -358,7 +368,7 @@ class DeliveryServiceTest {
 
         // act & assert
         assertThrows(NotFoundException.class,
-                () -> sut.deliver(deliveryId));
+                () -> sut.deliver(deliveryId, courierId));
 
         verify(deliveryRepository, never()).save(delivery);
 
@@ -380,9 +390,34 @@ class DeliveryServiceTest {
 
         // act & assert
         assertThrows(NotFoundException.class,
-                () -> sut.deliver(deliveryId));
+                () -> sut.deliver(deliveryId, courierId2));
 
         verify(deliveryRepository, never()).save(delivery);
+
+        assertThat(delivery.getStatus()).isEqualTo(DeliveryStatus.IN_DELIVERY);
+        assertThat(delivery.getEndTime()).isNull();
+        assertThat(delivery.getPayout()).isEqualTo(0);
+    }
+
+    @Test
+    void deliverShouldThrowExceptionWhenWrongCourier() {
+        // arrange
+        Delivery delivery = new Delivery(deliveryId, orderId);
+        Courier courier = new Courier(courierId, "John");
+        delivery.claim(courierId);
+        courier.claim(deliveryId);
+        delivery.setReadyNow();
+        delivery.pickUp();
+
+        given(deliveryRepository.findById(deliveryId)).willReturn(Optional.of(delivery));
+        given(courierRepository.findById(courierId)).willReturn(Optional.of(courier));
+
+        // act & assert
+        assertThrows(IllegalStateException.class,
+                () -> sut.deliver(deliveryId, courierId2));
+
+        verify(deliveryRepository, never()).save(delivery);
+        verify(courierRepository, never()).save(courier);
 
         assertThat(delivery.getStatus()).isEqualTo(DeliveryStatus.IN_DELIVERY);
         assertThat(delivery.getEndTime()).isNull();
@@ -397,7 +432,7 @@ class DeliveryServiceTest {
         given(deliveryRepository.findById(deliveryId)).willReturn(Optional.of(delivery));
 
         // act
-        var result = sut.findDelivery(deliveryId);
+        var result = sut.findDelivery(deliveryId, courierId2);
 
         // assert
         assertThat(result).isEqualTo(delivery);
@@ -410,6 +445,19 @@ class DeliveryServiceTest {
 
         // act & assert
         assertThrows(NotFoundException.class,
-                () -> sut.findDelivery(deliveryId));
+                () -> sut.findDelivery(deliveryId, courierId));
+    }
+
+    @Test
+    void findDeliveryShouldThrowExceptionWhenWrongCourier() {
+        // arrange
+        Delivery delivery = new Delivery(deliveryId, orderId);
+        delivery.claim(courierId);
+
+        given(deliveryRepository.findById(deliveryId)).willReturn(Optional.of(delivery));
+
+        // act & assert
+        assertThrows(IllegalStateException.class,
+                () -> sut.findDelivery(deliveryId, courierId2));
     }
 }

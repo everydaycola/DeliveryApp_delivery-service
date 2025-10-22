@@ -9,6 +9,7 @@ import be.kdg.sa.deliveryservice.infrastructure.courier.jpa.JpaCourierEntity;
 import be.kdg.sa.deliveryservice.infrastructure.courier.jpa.JpaCourierRepository;
 import be.kdg.sa.deliveryservice.infrastructure.delivery.jpa.JpaDeliveryEntity;
 import be.kdg.sa.deliveryservice.infrastructure.delivery.jpa.JpaDeliveryRepository;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Repository;
 
 import java.util.Collections;
@@ -16,6 +17,7 @@ import java.util.List;
 import java.util.Optional;
 
 @Repository
+@Slf4j
 public class DbDeliveryRepository implements DeliveryRepository {
 
     private final JpaDeliveryRepository jpaDeliveryRepository;
@@ -26,14 +28,8 @@ public class DbDeliveryRepository implements DeliveryRepository {
         this.jpaCourierRepository = jpaCourierRepository1;
     }
 
-    @Override
-    public List<Delivery> findAll() {
-        return jpaDeliveryRepository.findAll().stream()
-                .map(JpaDeliveryEntity::toDomain)
-                .toList();
-    }
-
     @Override public List <Delivery> findAllByStatus(DeliveryStatus status) {
+        log.info("Finding all deliveries with status {}", status);
         return jpaDeliveryRepository.findAllByStatus(status.toString())
                                     .orElse(Collections.emptyList())
                                     .stream()
@@ -43,11 +39,13 @@ public class DbDeliveryRepository implements DeliveryRepository {
 
     @Override
     public Optional<Delivery> findById(DeliveryId deliveryId) {
+        log.info("Finding delivery with id {}", deliveryId.id());
         return this.jpaDeliveryRepository.findById(deliveryId.id())
                 .map(JpaDeliveryEntity::toDomain);
     }
 
     @Override public List<Delivery> findCompletedDeliveriesFor(CourierId courierId) {
+        log.info("Finding completed deliveries for courier with id {}", courierId.id());
         return this.jpaDeliveryRepository.findAllByCourierIdAndStatus(courierId.id(), "DELIVERED")
                                          .orElse(Collections.emptyList())
                                          .stream()
@@ -57,6 +55,7 @@ public class DbDeliveryRepository implements DeliveryRepository {
 
     @Override
     public void save(Delivery delivery) {
+        log.info("Saving delivery {}", delivery.getId());
         JpaCourierEntity courier = Optional.ofNullable(delivery.getCourierId())
                 .flatMap(courierId -> jpaCourierRepository.findById(courierId.id()))
                 .orElse(null);
