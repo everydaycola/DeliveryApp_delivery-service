@@ -9,8 +9,6 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.time.LocalDateTime;
-import java.util.Arrays;
-import java.util.List;
 import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -19,6 +17,11 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 
 @ExtendWith(MockitoExtension.class)
 class DeliveryTest {
+
+    static double basePayout=3.0;
+    static double perMinutePayout=0.3;
+    static double minimumMinutes=5.0;
+    static double maximumMinutes=30.0;
 
     static OrderId orderId;
     static DeliveryId deliveryId;
@@ -39,18 +42,6 @@ class DeliveryTest {
     @BeforeEach
     void setUp() {
         this.delivery = new Delivery(deliveryId, orderId);
-    }
-
-    @Test
-    void overRidePaymentShouldSucceed() {
-        // arrange
-        double amount = 12.34;
-
-        // act
-        delivery.overRidePayment(amount);
-
-        // assert
-        assertThat(delivery.getPayout()).isEqualTo(amount);
     }
 
     @Test
@@ -104,9 +95,7 @@ class DeliveryTest {
     @Test
     void getStartTimeShouldReturnStartTimeOfDelivery() {
         // arrange
-        delivery.claim(courierId);
-        delivery.setReadyAt(startTime);
-
+        delivery = new Delivery(deliveryId, orderId, courierId, DeliveryStatus.READY_FOR_PICKUP, startTime, null, 0);
 
         // act
         LocalDateTime result = delivery.getStartTime();
@@ -118,10 +107,15 @@ class DeliveryTest {
     @Test
     void getEndTimeShouldReturnEndTimeOfDelivery() {
         // arrange
-        delivery.claim(courierId);
-        delivery.setReadyNow();
-        delivery.pickUp();
-        delivery.finishAt(endTime);
+        delivery = new Delivery(
+                deliveryId,
+                orderId,
+                courierId,
+                DeliveryStatus.DELIVERED,
+                startTime,
+                endTime,
+                4.5
+        );
 
         // act
         LocalDateTime result = delivery.getEndTime();
@@ -228,19 +222,6 @@ class DeliveryTest {
     }
 
     @Test
-    void setReadyAtShouldSucceed() {
-        // arrange
-        delivery.claim(courierId);
-
-        // act
-        delivery.setReadyAt(startTime);
-
-        // assert
-        assertDelivery(true, DeliveryStatus.READY_FOR_PICKUP, true, false, false);
-
-    }
-
-    @Test
     void pickUpShouldSucceed() {
         // arrange
         delivery.claim(courierId);
@@ -286,7 +267,7 @@ class DeliveryTest {
         delivery.pickUp();
 
         // act
-        delivery.finishNow();
+        delivery.finishNow(basePayout, perMinutePayout, minimumMinutes, maximumMinutes);
 
         // assert
         assertDelivery(true, DeliveryStatus.DELIVERED, true, true, true);
@@ -299,7 +280,7 @@ class DeliveryTest {
         delivery.setReadyNow();
 
         // act & assert
-        assertThrows(IllegalStateException.class, () -> delivery.finishNow());
+        assertThrows(IllegalStateException.class, () -> delivery.finishNow(basePayout, perMinutePayout, minimumMinutes, maximumMinutes));
 
         assertDelivery(true, DeliveryStatus.READY_FOR_PICKUP, true, false, false);
     }
@@ -310,32 +291,12 @@ class DeliveryTest {
         delivery.claim(courierId);
         delivery.setReadyNow();
         delivery.pickUp();
-        delivery.finishNow();
+        delivery.finishNow(basePayout, perMinutePayout, minimumMinutes, maximumMinutes);
 
         // act & assert
-        assertThrows(IllegalStateException.class, () -> delivery.finishNow());
+        assertThrows(IllegalStateException.class, () -> delivery.finishNow(basePayout, perMinutePayout, minimumMinutes, maximumMinutes));
 
         assertDelivery(true, DeliveryStatus.DELIVERED, true, true, true);
-    }
-
-    @Test
-    void finishAtShouldSucceed() {
-        // arrange
-        delivery.claim(courierId);
-        delivery.setReadyNow();
-        delivery.pickUp();
-
-        // act
-        delivery.finishAt(endTime);
-
-        // assert
-        assertDelivery(true, DeliveryStatus.DELIVERED, true, true, true);
-    }
-
-    private List<DeliveryStatus> getReverseEnumList(DeliveryStatus status) {
-        return Arrays.stream(DeliveryStatus.values())
-                .filter(deliveryStatus -> deliveryStatus != status)
-                .toList();
     }
 
     private void assertDelivery(boolean hasCourier, DeliveryStatus status, boolean hasStartTime, boolean hasEndTime, boolean hasPayout) {
@@ -362,7 +323,7 @@ class DeliveryTest {
         if (hasPayout) {
             assertThat(delivery.getPayout()).isGreaterThan(0);
         } else {
-            assertThat(delivery.getPayout()).isEqualTo(0);
+            assertThat(delivery.getPayout()).isZero();
         }
     }
 }

@@ -16,11 +16,6 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 public class Delivery {
 
-    private static final double BASE_PAYOUT = 3;
-    private static final double PER_MINUTE_PAYOUT = 0.3;
-    private static final double MINIMUM_MINUTES = 5;
-    private static final double MAXIMUM_MINUTES = 30;
-
     private final DeliveryId id;
     private final OrderId orderId;
     private CourierId courierId;
@@ -51,13 +46,9 @@ public class Delivery {
     }
 
     public void setReadyNow() {
-        setReadyAt(LocalDateTime.now());
-    }
-
-    public void setReadyAt(LocalDateTime startTime) {
         log.info("Setting ready for pickup for delivery {}", this.id);
         this.status.shouldBe(DeliveryStatus.CLAIMED);
-        this.startTime = startTime;
+        this.startTime = LocalDateTime.now();
         this.status = DeliveryStatus.READY_FOR_PICKUP;
     }
 
@@ -67,22 +58,13 @@ public class Delivery {
         this.status = DeliveryStatus.IN_DELIVERY;
     }
 
-    public void finishNow() {
-        finishAt(LocalDateTime.now());
-    }
-
-    public void finishAt(LocalDateTime endTime) {
+    public void finishNow(double basePayout, double perMinutePayout, double minimumMinutes, double maximumMinutes) {
         log.info("Finishing delivery {}", this.id);
         this.status.shouldBe(DeliveryStatus.IN_DELIVERY);
-        this.endTime = endTime;
-        this.payout = calculatePayout(this.startTime, endTime);
+        this.endTime = LocalDateTime.now();
+        double minutes = Math.ceil(Duration.between(this.startTime, this.endTime).getSeconds() / 60.0);
+        this.payout = basePayout + (perMinutePayout * Math.clamp(minutes, minimumMinutes, maximumMinutes));
         this.status = DeliveryStatus.DELIVERED;
-    }
-
-    private double calculatePayout(LocalDateTime startTime, LocalDateTime endTime) {
-        log.info("Calculating payout for delivery {}", this.id);
-        double minutes = Math.ceil(Duration.between(startTime, endTime).getSeconds() / 60.0);
-        return BASE_PAYOUT + (PER_MINUTE_PAYOUT * Math.clamp(minutes, MINIMUM_MINUTES, MAXIMUM_MINUTES));
     }
 
     public void authenticate(CourierId courierId) {
@@ -90,10 +72,5 @@ public class Delivery {
         if (this.courierId != null && !this.courierId.equals(courierId)) {
             throw new IllegalStateException("Courier " + courierId.toString() + " does not own delivery " + this.id.toString());
         }
-    }
-
-    public void overRidePayment(double payout) {
-        log.info("Overriding payout for delivery {}", this.id);
-        this.payout = payout;
     }
 }

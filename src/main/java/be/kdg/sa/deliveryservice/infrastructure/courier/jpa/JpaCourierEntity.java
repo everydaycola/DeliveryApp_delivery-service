@@ -8,8 +8,10 @@ import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @Entity
 @Table(name = "Couriers")
@@ -47,7 +49,8 @@ public class JpaCourierEntity {
         return new Courier(
                 new CourierId(this.id),
                 this.currentdelivery == null ? null : new DeliveryId(this.currentdelivery.getId()),
-                this.pastDeliveries.stream().map(delivery -> new DeliveryId(delivery.getId())).toList(),
+                this.pastDeliveries.stream().map(delivery ->
+                     new DeliveryId(delivery.getId())).collect(Collectors.toCollection(ArrayList::new)),
                 this.name
         );
     }

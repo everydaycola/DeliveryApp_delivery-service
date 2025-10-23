@@ -1,6 +1,6 @@
 package be.kdg.sa.deliveryservice.application;
 
-import be.kdg.sa.deliveryservice.domain.NotFoundException;
+import be.kdg.sa.deliveryservice.config.DomainProperties;
 import be.kdg.sa.deliveryservice.domain.courier.Courier;
 import be.kdg.sa.deliveryservice.domain.courier.CourierId;
 import be.kdg.sa.deliveryservice.domain.courier.CourierRepository;
@@ -21,10 +21,12 @@ public class DeliveryService {
 
     private final DeliveryRepository deliveries;
     private final CourierRepository couriers;
+    private final DomainProperties domainProperties;
 
-    public DeliveryService(DeliveryRepository deliveries, CourierRepository couriers) {
+    public DeliveryService(DeliveryRepository deliveries, CourierRepository couriers, DomainProperties domainProperties) {
         this.deliveries = deliveries;
         this.couriers = couriers;
+        this.domainProperties = domainProperties;
     }
 
     public Courier findCourierById(final CourierId courierId) {
@@ -88,7 +90,12 @@ public class DeliveryService {
         final Delivery delivery = deliveries.findById(deliveryId).orElseThrow(deliveryId::notFound);
         final Courier courier = couriers.findById(delivery.getCourierId()).orElseThrow(delivery.getCourierId()::notFound);
         delivery.authenticate(courierId);
-        delivery.finishNow();
+        delivery.finishNow(
+                domainProperties.getBasePayout(),
+                domainProperties.getPerMinutePayout(),
+                domainProperties.getMinimumMinutes(),
+                domainProperties.getMaximumMinutes()
+        );
         courier.finishDelivery();
         deliveries.save(delivery);
         couriers.save(courier);

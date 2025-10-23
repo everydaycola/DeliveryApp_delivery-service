@@ -1,0 +1,24 @@
+{
+  "properties": [
+    {
+      "name": "delivery-base-payout",
+      "type": "java.lang.Double",
+      "description": "The base payout for any delivery regardless of time in euro."
+    },
+    {
+      "name": "delivery-per-minute-payout",
+      "type": "java.lang.Double",
+      "description": "The payout per minute in euro."
+    },
+    {
+      "name": "delivery-maximum-minutes",
+      "type": "java.lang.Double",
+      "description": "The minimum minutes compensated for."
+    },
+    {
+      "name": "delivery-minimum-minutes",
+      "type": "java.lang.Double",
+      "description": "The maximum minutes compensated for."
+    }
+  ]
+}
