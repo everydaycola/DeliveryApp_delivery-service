@@ -1,5 +1,6 @@
 package be.kdg.sa.deliveryservice.infrastructure.rabbitMQ;
 
+import be.kdg.sa.deliveryservice.config.RabbitMQProperties;
 import org.springframework.amqp.core.*;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -7,33 +8,32 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 public class RabbitMQTopology {
 
-    public static final String KDG_EXCHANGE_NAME = "kdg_exchange";
+    private final RabbitMQProperties properties;
 
-    public static final String ORDER_ACCEPTED_QUEUE_NAME= "delivery_order_accepted_queue";
-    public static final String ORDER_READY_QUEUE_NAME= "delivery_order_ready_queue";
+    public RabbitMQTopology(RabbitMQProperties properties) {this.properties = properties;}
 
     @Bean
     TopicExchange kdgExchange() {
-        return new TopicExchange(KDG_EXCHANGE_NAME);
+        return new TopicExchange(properties.getExchangeName());
     }
 
     @Bean
     Queue orderAcceptedQueue() {
-        return QueueBuilder.nonDurable(ORDER_ACCEPTED_QUEUE_NAME).build();
+        return QueueBuilder.nonDurable(properties.getOrderAcceptedQueue()).build();
     }
 
     @Bean
     Queue orderReadyQueue() {
-        return QueueBuilder.nonDurable(ORDER_READY_QUEUE_NAME).build();
+        return QueueBuilder.nonDurable(properties.getOrderReadyQueue()).build();
     }
 
     @Bean
     Binding orderAcceptedBinding(TopicExchange kdgExchange) {
-        return BindingBuilder.bind(orderAcceptedQueue()).to(kdgExchange).with("order.accepted.#");
+        return BindingBuilder.bind(orderAcceptedQueue()).to(kdgExchange).with(properties.getOrderAcceptedBinding());
     }
 
     @Bean
     Binding orderReadyBinding(){
-        return BindingBuilder.bind(orderReadyQueue()).to(kdgExchange()).with("order.ready");
+        return BindingBuilder.bind(orderReadyQueue()).to(kdgExchange()).with(properties.getOrderReadyBinding());
     }
 }

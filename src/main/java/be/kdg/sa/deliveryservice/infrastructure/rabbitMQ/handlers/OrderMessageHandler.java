@@ -1,6 +1,5 @@
 package be.kdg.sa.deliveryservice.infrastructure.rabbitMQ.handlers;
 
-import be.kdg.sa.deliveryservice.infrastructure.rabbitMQ.RabbitMQTopology;
 import be.kdg.sa.deliveryservice.infrastructure.rabbitMQ.messages.OrderAcceptedMessage;
 import be.kdg.sa.deliveryservice.infrastructure.rabbitMQ.messages.OrderReadyMessage;
 import lombok.extern.slf4j.Slf4j;
@@ -16,12 +15,12 @@ public class OrderMessageHandler {
 
     }
 
-    @RabbitListener(queues = RabbitMQTopology.ORDER_ACCEPTED_QUEUE_NAME)
+    @RabbitListener(queues = "${spring.rabbitmq.kdg.order-accepted-queue}")
     void onOrderAcceptedMessageReceived(OrderAcceptedMessage message) {
         log.info("Order Accepted Message Received: Order={}", message.orderDto().id());
     }
 
-    @RabbitListener(queues = RabbitMQTopology.ORDER_READY_QUEUE_NAME)
+    @RabbitListener(queues = "${spring.rabbitmq.kdg.order-ready-queue}")
     void onOrderReadyMessageReceived(OrderReadyMessage message) {
         log.info("Order Ready Message Received: Order={}", message.orderDto().id());
     }
