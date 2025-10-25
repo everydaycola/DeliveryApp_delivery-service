@@ -1,5 +1,6 @@
 package be.kdg.sa.deliveryservice.application;
 
+import be.kdg.sa.deliveryservice.config.DomainProperties;
 import be.kdg.sa.deliveryservice.domain.NotFoundException;
 import be.kdg.sa.deliveryservice.domain.courier.Courier;
 import be.kdg.sa.deliveryservice.domain.courier.CourierId;
@@ -39,6 +40,9 @@ class DeliveryServiceTest {
 
     @Mock
     private DeliveryRepository deliveryRepository;
+
+    @Mock
+    private DomainProperties domainProperties;
 
     @InjectMocks
     private DeliveryService sut;
@@ -341,6 +345,10 @@ class DeliveryServiceTest {
 
         given(deliveryRepository.findById(deliveryId)).willReturn(Optional.of(delivery));
         given(courierRepository.findById(courierId)).willReturn(Optional.of(courier));
+        given(domainProperties.getBasePayout()).willReturn(3.0);
+        given(domainProperties.getPerMinutePayout()).willReturn(0.3);
+        given(domainProperties.getMinimumMinutes()).willReturn(5.0);
+        given(domainProperties.getMaximumMinutes()).willReturn(30.0);
 
         // act
         var result = sut.deliver(deliveryId, courierId);

@@ -1,4 +1,4 @@
-package be.kdg.sa.deliveryservice.api;
+package be.kdg.sa.deliveryservice.api.courier.dtos;
 
 import be.kdg.sa.deliveryservice.domain.courier.Courier;
 import lombok.extern.slf4j.Slf4j;

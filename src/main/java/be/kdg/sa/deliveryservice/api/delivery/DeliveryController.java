@@ -1,5 +1,7 @@
-package be.kdg.sa.deliveryservice.api;
+package be.kdg.sa.deliveryservice.api.delivery;
 
+import be.kdg.sa.deliveryservice.api.OrderPickedUpAndDeliveredDto;
+import be.kdg.sa.deliveryservice.api.delivery.dtos.DeliveryDto;
 import be.kdg.sa.deliveryservice.application.DeliveryService;
 import be.kdg.sa.deliveryservice.config.RabbitMQProperties;
 import be.kdg.sa.deliveryservice.domain.courier.CourierId;

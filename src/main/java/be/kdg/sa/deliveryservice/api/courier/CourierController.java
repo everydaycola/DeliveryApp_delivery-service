@@ -1,9 +1,10 @@
-package be.kdg.sa.deliveryservice.api;
+package be.kdg.sa.deliveryservice.api.courier;
 
+import be.kdg.sa.deliveryservice.api.courier.dtos.CourierDto;
+import be.kdg.sa.deliveryservice.api.delivery.dtos.CompletedDeliveriesDto;
 import be.kdg.sa.deliveryservice.application.DeliveryService;
 import be.kdg.sa.deliveryservice.domain.courier.Courier;
 import be.kdg.sa.deliveryservice.domain.courier.CourierId;
-import ch.qos.logback.core.subst.Token;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
