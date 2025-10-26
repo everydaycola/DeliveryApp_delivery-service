@@ -18,10 +18,10 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 @ExtendWith(MockitoExtension.class)
 class DeliveryTest {
 
-    static double basePayout=3.0;
-    static double perMinutePayout=0.3;
-    static double minimumMinutes=5.0;
-    static double maximumMinutes=30.0;
+    static final double basePayout=3.0;
+    static final double perMinutePayout=0.3;
+    static final double minimumMinutes=5.0;
+    static final double maximumMinutes=30.0;
 
     static OrderId orderId;
     static DeliveryId deliveryId;

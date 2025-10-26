@@ -361,7 +361,7 @@ class DeliveryServiceTest {
 
         assertThat(result.getStatus()).isEqualTo(DeliveryStatus.DELIVERED);
         assertThat(result.getEndTime()).isNotNull();
-        assertThat(result.getPayout()).isNotEqualTo(0);
+        assertThat(result.getPayout()).isNotZero();
     }
 
     @Test
@@ -382,7 +382,7 @@ class DeliveryServiceTest {
 
         assertThat(delivery.getStatus()).isEqualTo(DeliveryStatus.IN_DELIVERY);
         assertThat(delivery.getEndTime()).isNull();
-        assertThat(delivery.getPayout()).isEqualTo(0);
+        assertThat(delivery.getPayout()).isZero();
     }
 
     @Test
@@ -404,7 +404,7 @@ class DeliveryServiceTest {
 
         assertThat(delivery.getStatus()).isEqualTo(DeliveryStatus.IN_DELIVERY);
         assertThat(delivery.getEndTime()).isNull();
-        assertThat(delivery.getPayout()).isEqualTo(0);
+        assertThat(delivery.getPayout()).isZero();
     }
 
     @Test
@@ -429,7 +429,7 @@ class DeliveryServiceTest {
 
         assertThat(delivery.getStatus()).isEqualTo(DeliveryStatus.IN_DELIVERY);
         assertThat(delivery.getEndTime()).isNull();
-        assertThat(delivery.getPayout()).isEqualTo(0);
+        assertThat(delivery.getPayout()).isZero();
     }
 
     @Test

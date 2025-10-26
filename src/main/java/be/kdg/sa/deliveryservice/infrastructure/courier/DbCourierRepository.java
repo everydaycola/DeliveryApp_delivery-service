@@ -25,9 +25,9 @@ public class DbCourierRepository implements CourierRepository {
     }
 
     @Override
-    public Optional<Courier> findById(CourierId CourierId) {
-        log.info("Finding courier with id {}", CourierId.id());
-        return this.jpaCourierRepository.findById(CourierId.id())
+    public Optional<Courier> findById(CourierId courierId) {
+        log.info("Finding courier with id {}", courierId.id());
+        return this.jpaCourierRepository.findById(courierId.id())
                 .map(JpaCourierEntity::toDomain);
     }
 

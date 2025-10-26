@@ -22,6 +22,8 @@ import java.util.UUID;
 @PreAuthorize("hasAuthority('courier')")
 @Slf4j
 public class CourierController {
+    private static final String TOKEN_ID_NAME = "databaseid";
+
     private final DeliveryService deliveries;
 
     public CourierController(DeliveryService deliveries) {
@@ -30,22 +32,22 @@ public class CourierController {
 
     @GetMapping
     public ResponseEntity <CourierDto> findById(@AuthenticationPrincipal Jwt token) {
-        log.info("findById: {}", token.getClaimAsString("databaseid"));
-        CourierId courierId = new CourierId(UUID.fromString(token.getClaimAsString("databaseid")));
+        log.info("findById: {}", token.getClaimAsString(TOKEN_ID_NAME));
+        CourierId courierId = new CourierId(UUID.fromString(token.getClaimAsString(TOKEN_ID_NAME)));
         return ResponseEntity.ok(CourierDto.from(deliveries.findCourierById(courierId)));
     }
 
     @GetMapping("/completed")
     public ResponseEntity<CompletedDeliveriesDto> getCompletedDeliveries(@AuthenticationPrincipal Jwt token) {
-        log.info("getCompletedDeliveries: {}", token.getClaimAsString("databaseid"));
-        CourierId courierId = new CourierId(UUID.fromString(token.getClaimAsString("databaseid")));
+        log.info("getCompletedDeliveries: {}", token.getClaimAsString(TOKEN_ID_NAME));
+        CourierId courierId = new CourierId(UUID.fromString(token.getClaimAsString(TOKEN_ID_NAME)));
         return ResponseEntity.ok(CompletedDeliveriesDto.from(deliveries.findCompletedDeliveries(courierId)));
     }
 
     @PostMapping("/unclaim")
     public ResponseEntity<CourierDto> confirm(@AuthenticationPrincipal Jwt token) {
-        log.info("confirm: {}", token.getClaimAsString("databaseid"));
-        final CourierId courierId = new CourierId(UUID.fromString(token.getClaimAsString("databaseid")));
+        log.info("confirm: {}", token.getClaimAsString(TOKEN_ID_NAME));
+        final CourierId courierId = new CourierId(UUID.fromString(token.getClaimAsString(TOKEN_ID_NAME)));
         final Courier courier = deliveries.unClaim(courierId);
         final CourierDto dto = CourierDto.from(courier);
         return ResponseEntity.ok(dto);

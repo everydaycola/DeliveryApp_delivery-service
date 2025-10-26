@@ -19,7 +19,7 @@ class CourierTest {
     static CourierId courierId;
     static DeliveryId deliveryId;
     static DeliveryId secondDeliveryId;
-    static String name = "John";
+    static final String name = "John";
     Courier courier;
 
     @BeforeAll

@@ -7,7 +7,6 @@ import be.kdg.sa.deliveryservice.domain.delivery.DeliveryId;
 import be.kdg.sa.deliveryservice.domain.order.OrderId;
 import be.kdg.sa.deliveryservice.infrastructure.courier.jpa.JpaCourierEntity;
 import be.kdg.sa.deliveryservice.infrastructure.courier.jpa.JpaCourierRepository;
-import be.kdg.sa.deliveryservice.infrastructure.delivery.DbDeliveryRepository;
 import be.kdg.sa.deliveryservice.infrastructure.delivery.jpa.JpaDeliveryEntity;
 import be.kdg.sa.deliveryservice.infrastructure.delivery.jpa.JpaDeliveryRepository;
 import org.junit.jupiter.api.Test;
@@ -21,7 +20,6 @@ import java.util.List;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.*;
 
@@ -29,11 +27,9 @@ import static org.mockito.Mockito.*;
 class DbCourierRepositoryTest {
 
     private static final OrderId orderId = OrderId.create();
-    private static final OrderId orderId2 = OrderId.create();
     private static final CourierId courierId = CourierId.create();
     private static final String courierName = "John";
     private static final DeliveryId deliveryId = DeliveryId.create();
-    private static final DeliveryId deliveryId2 = DeliveryId.create();
 
     @Mock
     private JpaDeliveryRepository jpaDeliveryRepository;

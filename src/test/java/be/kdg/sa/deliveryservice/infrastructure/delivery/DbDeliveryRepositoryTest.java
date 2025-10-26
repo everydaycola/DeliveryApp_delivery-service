@@ -28,10 +28,10 @@ import static org.mockito.BDDMockito.given;
 @ExtendWith(MockitoExtension.class)
 class DbDeliveryRepositoryTest {
 
-    static double basePayout=3.0;
-    static double perMinutePayout=0.3;
-    static double minimumMinutes=5.0;
-    static double maximumMinutes=30.0;
+    static final double basePayout=3.0;
+    static final double perMinutePayout=0.3;
+    static final double minimumMinutes=5.0;
+    static final double maximumMinutes=30.0;
 
     private static final OrderId orderId = OrderId.create();
     private static final OrderId orderId2 = OrderId.create();

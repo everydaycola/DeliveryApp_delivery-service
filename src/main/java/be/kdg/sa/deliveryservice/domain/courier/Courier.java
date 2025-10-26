@@ -54,9 +54,9 @@ public class Courier {
             throw new IllegalStateException("Courier doesn't have an order");
         }
         log.info("Courier {} unclaimed order {}", this.id, this.currentDelivery);
-        DeliveryId old_delivery = this.currentDelivery;
+        DeliveryId oldDelivery = this.currentDelivery;
         this.currentDelivery = null;
-        return old_delivery;
+        return oldDelivery;
     }
 
     public void finishDelivery() {
