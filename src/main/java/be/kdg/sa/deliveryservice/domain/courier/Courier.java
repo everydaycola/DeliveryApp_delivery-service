@@ -49,22 +49,22 @@ public class Courier {
     }
 
     public DeliveryId unClaim() {
-        log.info("Courier {} unclaimed order {}", this.id, this.currentDelivery);
         if (this.currentDelivery == null) {
-            log.warn("Courier {} unclaimed order {} but it was already unclaimed", this.id, this.currentDelivery);
+            log.warn("Courier {} unclaimed order but doesn't have one", this.id);
             throw new IllegalStateException("Courier doesn't have an order");
         }
+        log.info("Courier {} unclaimed order {}", this.id, this.currentDelivery);
         DeliveryId old_delivery = this.currentDelivery;
         this.currentDelivery = null;
         return old_delivery;
     }
 
     public void finishDelivery() {
-        log.info("Courier {} finished order {}", this.id, this.currentDelivery);
         if (this.currentDelivery == null) {
-            log.warn("Courier {} finished order {} but it was already finished", this.id, this.currentDelivery);
+            log.warn("Courier {} tried finishing order but doesn't have one assigned", this.id);
             throw new IllegalStateException("Courier doesn't have an order");
         }
+        log.info("Courier {} finished order {}", this.id, this.currentDelivery);
         this.pastDeliveries.add(this.currentDelivery);
         this.currentDelivery = null;
     }
