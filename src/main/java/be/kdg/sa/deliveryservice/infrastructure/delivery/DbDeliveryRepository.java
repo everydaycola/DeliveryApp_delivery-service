@@ -5,6 +5,7 @@ import be.kdg.sa.deliveryservice.domain.delivery.Delivery;
 import be.kdg.sa.deliveryservice.domain.delivery.DeliveryId;
 import be.kdg.sa.deliveryservice.domain.delivery.DeliveryRepository;
 import be.kdg.sa.deliveryservice.domain.delivery.DeliveryStatus;
+import be.kdg.sa.deliveryservice.domain.order.OrderId;
 import be.kdg.sa.deliveryservice.infrastructure.courier.jpa.JpaCourierEntity;
 import be.kdg.sa.deliveryservice.infrastructure.courier.jpa.JpaCourierRepository;
 import be.kdg.sa.deliveryservice.infrastructure.delivery.jpa.JpaDeliveryEntity;
@@ -63,5 +64,12 @@ public class DbDeliveryRepository implements DeliveryRepository {
         JpaDeliveryEntity jpaDeliveryEntity = JpaDeliveryEntity.fromDomain(delivery, courier);
         this.jpaDeliveryRepository.save(jpaDeliveryEntity);
 
+    }
+
+    @Override
+    public Optional <Delivery> findDeliveryByOrderId(OrderId orderId) {
+        log.info("Finding delivery for order with id {}", orderId.id());
+        return this.jpaDeliveryRepository.findByOrderId(orderId.id())
+                .map(JpaDeliveryEntity::toDomain);
     }
 }

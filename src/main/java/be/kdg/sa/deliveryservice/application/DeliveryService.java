@@ -8,6 +8,7 @@ import be.kdg.sa.deliveryservice.domain.delivery.Delivery;
 import be.kdg.sa.deliveryservice.domain.delivery.DeliveryId;
 import be.kdg.sa.deliveryservice.domain.delivery.DeliveryRepository;
 import be.kdg.sa.deliveryservice.domain.delivery.DeliveryStatus;
+import be.kdg.sa.deliveryservice.domain.order.OrderId;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -27,6 +28,12 @@ public class DeliveryService {
         this.deliveries = deliveries;
         this.couriers = couriers;
         this.domainProperties = domainProperties;
+    }
+
+    public void createNewDelivery(OrderId orderId) {
+        log.info("Creating new delivery for order {}", orderId);
+        final Delivery delivery = new Delivery(DeliveryId.create(), orderId);
+        deliveries.save(delivery);
     }
 
     public Courier findCourierById(final CourierId courierId) {
@@ -74,6 +81,11 @@ public class DeliveryService {
         delivery.setReadyNow();
         deliveries.save(delivery);
         return delivery;
+    }
+
+    public void ready(OrderId orderId) {
+        final Delivery delivery = deliveries.findDeliveryByOrderId(orderId).orElseThrow(orderId::notFound);
+        this.ready(delivery.getId(), delivery.getCourierId());
     }
 
     public Delivery pickup(DeliveryId deliveryId, CourierId courierId) {
