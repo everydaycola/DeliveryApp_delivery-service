@@ -125,24 +125,4 @@ public class DeliveryService {
         delivery.authenticate(courierId);
         return delivery;
     }
-
-    public Map<Courier, List<Delivery>> findAllCouriersWithCompletedDeliveries(LocalDateTime start, LocalDateTime end) {
-        log.info("Finding all couriers with completed deliveries between {} and {}", start, end);
-        log.warn("Very intensive operation");
-        // all deliveries within timespan
-        final List<Delivery> allValidCompletedDeliveries = deliveries.findAllCompletedDeliveriesBetween(start, end);
-        // all distinct courier id's of the fetched deliveries
-        final Set<CourierId> AllCourierIds = allValidCompletedDeliveries.stream().map(Delivery::getCourierId).collect(Collectors.toSet());
-        // all couriers of the fetched deliveries
-        final List<Courier> allCouriers = couriers.findAllByIdIn(AllCourierIds);
-        return allCouriers.stream()
-                .collect(Collectors.toMap(
-                        courier -> courier,
-                        courier -> allValidCompletedDeliveries.stream()
-                                .filter(delivery ->
-                                        delivery.getCourierId()
-                                                .equals(courier.getId())
-                                ).toList()
-                ));
-    }
 }

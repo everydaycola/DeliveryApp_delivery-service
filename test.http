@@ -98,8 +98,8 @@ client_id=keepdishesgoing&client_secret=GXg3zjaA8qrRFWFU06yhLrvLVI877xYE&usernam
     client.global.set("access_token_admin", response.body.access_token);
 %}
 
-### POST request to get summary of all deliveries
-POST http://localhost:8082/api/couriers
+### GET request to get report as pdf
+GET http://localhost:8082/api/admin/pdf
 Authorization: Bearer {{access_token_admin}}
 Content-Type: application/json
 
@@ -108,8 +108,8 @@ Content-Type: application/json
   "end": "2100-01-01T00:00:00"
 }
 
-### POST request to get summary of all deliveries
-POST http://localhost:8082/api/couriers
+### GET request to get report as pdf
+GET http://localhost:8082/api/admin/pdf
 Authorization: Bearer {{access_token_admin}}
 Content-Type: application/json
 
