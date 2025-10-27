@@ -1,8 +1,9 @@
-package be.kdg.sa.deliveryservice.api.delivery.dtos;
+package be.kdg.sa.deliveryservice.api.courier.dtos;
 
 import be.kdg.sa.deliveryservice.domain.delivery.Delivery;
 import lombok.extern.slf4j.Slf4j;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Slf4j
@@ -14,7 +15,18 @@ public record CompletedDeliveriesDto(
         log.info("Creating CompletedDeliveriesDto from deliveries");
         return new CompletedDeliveriesDto(
                 deliveries.stream().map(Delivery::getPayout).reduce(0.0, Double::sum),
-                deliveries.stream().map(CompletedDeliveryDto::from).toList()
+                deliveries.stream().map(delivery -> new CompletedDeliveryDto(
+                        delivery.getStartTime(),
+                        delivery.getEndTime(),
+                        delivery.getPayout()
+                )).toList()
         );
+    }
+
+    private record CompletedDeliveryDto(
+            LocalDateTime startTime,
+            LocalDateTime endTime,
+            double payout
+    ) {
     }
 }

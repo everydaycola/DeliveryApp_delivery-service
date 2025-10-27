@@ -8,6 +8,8 @@
 @delivery4=770e8400-e29b-41d4-a716-446655440004
 @delivery5=770e8400-e29b-41d4-a716-446655440005
 @delivery6=770e8400-e29b-41d4-a716-446655440006
+@adminUsername=admin
+@adminPassword=admin
 
 
 ### Get access token for courier1
@@ -85,3 +87,33 @@ Authorization: Bearer {{access_token_courier1}}
 ### POST request set delivery as delivered and calculate the payout.
 POST http://localhost:8082/api/deliveries/{{delivery5}}/deliver
 Authorization: Bearer {{access_token_courier1}}
+
+### Get access token for admin
+POST http://localhost:8180/realms/keepdishesgoing/protocol/openid-connect/token HTTP/1.1
+Content-Type: application/x-www-form-urlencoded
+
+client_id=keepdishesgoing&client_secret=GXg3zjaA8qrRFWFU06yhLrvLVI877xYE&username={{adminUsername}}&password={{adminPassword}}&grant_type=password&scope=openid
+
+> {%
+    client.global.set("access_token_admin", response.body.access_token);
+%}
+
+### POST request to get summary of all deliveries
+POST http://localhost:8082/api/couriers
+Authorization: Bearer {{access_token_admin}}
+Content-Type: application/json
+
+{
+  "start": "1900-01-01T00:00:00",
+  "end": "2100-01-01T00:00:00"
+}
+
+### POST request to get summary of all deliveries
+POST http://localhost:8082/api/couriers
+Authorization: Bearer {{access_token_admin}}
+Content-Type: application/json
+
+{
+  "start": "2025-10-02T12:00:00",
+  "end": "2025-10-07T12:00:00"
+}

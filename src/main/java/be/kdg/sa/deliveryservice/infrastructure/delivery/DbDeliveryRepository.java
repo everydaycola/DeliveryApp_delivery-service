@@ -13,6 +13,7 @@ import be.kdg.sa.deliveryservice.infrastructure.delivery.jpa.JpaDeliveryReposito
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Repository;
 
+import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
@@ -27,6 +28,13 @@ public class DbDeliveryRepository implements DeliveryRepository {
     public DbDeliveryRepository(JpaDeliveryRepository jpaCourierRepository, JpaCourierRepository jpaCourierRepository1) {
         this.jpaDeliveryRepository = jpaCourierRepository;
         this.jpaCourierRepository = jpaCourierRepository1;
+    }
+
+    @Override
+    public Optional <Delivery> findDeliveryByOrderId(OrderId orderId) {
+        log.info("Finding delivery for order with id {}", orderId.id());
+        return this.jpaDeliveryRepository.findByOrderId(orderId.id())
+                .map(JpaDeliveryEntity::toDomain);
     }
 
     @Override public List <Delivery> findAllByStatus(DeliveryStatus status) {
@@ -55,6 +63,17 @@ public class DbDeliveryRepository implements DeliveryRepository {
     }
 
     @Override
+    public List<Delivery> findAllCompletedDeliveriesBetween(LocalDateTime start, LocalDateTime end) {
+        return this.jpaDeliveryRepository.findAllByStatusAndStartTimeIsAfterAndEndTimeIsBefore(
+                DeliveryStatus.DELIVERED.toString(),
+                start, end)
+                .orElse(Collections.emptyList())
+                .stream()
+                .map(JpaDeliveryEntity::toDomain)
+                .toList();
+    }
+
+    @Override
     public void save(Delivery delivery) {
         log.info("Saving delivery {}", delivery.getId());
         JpaCourierEntity courier = Optional.ofNullable(delivery.getCourierId())
@@ -64,12 +83,5 @@ public class DbDeliveryRepository implements DeliveryRepository {
         JpaDeliveryEntity jpaDeliveryEntity = JpaDeliveryEntity.fromDomain(delivery, courier);
         this.jpaDeliveryRepository.save(jpaDeliveryEntity);
 
-    }
-
-    @Override
-    public Optional <Delivery> findDeliveryByOrderId(OrderId orderId) {
-        log.info("Finding delivery for order with id {}", orderId.id());
-        return this.jpaDeliveryRepository.findByOrderId(orderId.id())
-                .map(JpaDeliveryEntity::toDomain);
     }
 }

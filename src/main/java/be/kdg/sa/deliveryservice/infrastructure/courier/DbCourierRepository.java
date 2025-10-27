@@ -32,6 +32,15 @@ public class DbCourierRepository implements CourierRepository {
     }
 
     @Override
+    public List<Courier> findAllByIdIn(Set<CourierId> ids) {
+        return this.jpaCourierRepository.findAllByIdIn(
+                    ids.stream().map(CourierId::id).toList()
+                ).stream()
+                .map(JpaCourierEntity::toDomain)
+                .toList();
+    }
+
+    @Override
     public void save(Courier courier) {
         log.info("Saving courier {}", courier.getId());
         JpaDeliveryEntity currentDelivery = Optional.ofNullable(courier.getCurrentDeliveryId())

@@ -13,7 +13,11 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 @Service
 @Transactional
@@ -37,6 +41,7 @@ public class DeliveryService {
     }
 
     public Courier findCourierById(final CourierId courierId) {
+        log.info("Finding courier with id: {}", courierId);
         return couriers.findById(courierId)
                 .orElseThrow(courierId::notFound);
     }
@@ -116,8 +121,28 @@ public class DeliveryService {
 
     public Delivery findDelivery(DeliveryId deliveryId, CourierId courierId) {
         log.info("Finding delivery with id: {} for courier with id: {}", deliveryId, courierId);
-        Delivery delivery = deliveries.findById(deliveryId).orElseThrow(deliveryId::notFound);
+        final Delivery delivery = deliveries.findById(deliveryId).orElseThrow(deliveryId::notFound);
         delivery.authenticate(courierId);
         return delivery;
+    }
+
+    public Map<Courier, List<Delivery>> findAllCouriersWithCompletedDeliveries(LocalDateTime start, LocalDateTime end) {
+        log.info("Finding all couriers with completed deliveries between {} and {}", start, end);
+        log.warn("Very intensive operation");
+        // all deliveries within timespan
+        final List<Delivery> allValidCompletedDeliveries = deliveries.findAllCompletedDeliveriesBetween(start, end);
+        // all distinct courier id's of the fetched deliveries
+        final Set<CourierId> AllCourierIds = allValidCompletedDeliveries.stream().map(Delivery::getCourierId).collect(Collectors.toSet());
+        // all couriers of the fetched deliveries
+        final List<Courier> allCouriers = couriers.findAllByIdIn(AllCourierIds);
+        return allCouriers.stream()
+                .collect(Collectors.toMap(
+                        courier -> courier,
+                        courier -> allValidCompletedDeliveries.stream()
+                                .filter(delivery ->
+                                        delivery.getCourierId()
+                                                .equals(courier.getId())
+                                ).toList()
+                ));
     }
 }
