@@ -1,6 +1,6 @@
 package be.kdg.sa.deliveryservice.api.admin;
 
-import be.kdg.sa.deliveryservice.api.courier.dtos.TimeSpan;
+import be.kdg.sa.deliveryservice.api.admin.dtos.TimeSpan;
 import be.kdg.sa.deliveryservice.application.PdfSummaryService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpHeaders;
