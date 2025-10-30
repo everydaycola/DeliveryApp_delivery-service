@@ -13,11 +13,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.stream.Collectors;
 
 @Service
 @Transactional
@@ -34,10 +30,11 @@ public class DeliveryService {
         this.domainProperties = domainProperties;
     }
 
-    public void createNewDelivery(OrderId orderId) {
+    public Delivery createNewDelivery(OrderId orderId) {
         log.info("Creating new delivery for order {}", orderId);
         final Delivery delivery = new Delivery(DeliveryId.create(), orderId);
         deliveries.save(delivery);
+        return delivery;
     }
 
     public Courier findCourierById(final CourierId courierId) {

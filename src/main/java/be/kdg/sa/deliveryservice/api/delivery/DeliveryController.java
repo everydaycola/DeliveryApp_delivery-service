@@ -7,6 +7,7 @@ import be.kdg.sa.deliveryservice.config.RabbitMQProperties;
 import be.kdg.sa.deliveryservice.domain.courier.CourierId;
 import be.kdg.sa.deliveryservice.domain.delivery.Delivery;
 import be.kdg.sa.deliveryservice.domain.delivery.DeliveryId;
+import be.kdg.sa.deliveryservice.domain.order.OrderId;
 import be.kdg.sa.deliveryservice.infrastructure.rabbitMQ.messages.OrderDeliveredMessage;
 import be.kdg.sa.deliveryservice.infrastructure.rabbitMQ.messages.OrderPickedUpMessage;
 import lombok.extern.slf4j.Slf4j;
@@ -35,6 +36,14 @@ public class DeliveryController {
         this.deliveries = deliveries;
         this.rabbitTemplate = rabbitTemplate;
         this.properties = properties;
+    }
+
+    @PostMapping("/{id}")
+    public ResponseEntity<DeliveryDto> create(@PathVariable final UUID id) {
+        log.warn("This method is for testing purposes only and should not be used in production");
+        OrderId orderId = new OrderId(id);
+        Delivery delivery = deliveries.createNewDelivery(orderId);
+        return ResponseEntity.ok(DeliveryDto.from(delivery));
     }
 
     @GetMapping("/unclaimed")
