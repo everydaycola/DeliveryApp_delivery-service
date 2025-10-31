@@ -21,7 +21,6 @@ import java.util.UUID;
 public class JpaDeliveryEntity {
     @Getter
     @Id
-    @GeneratedValue(strategy = GenerationType.UUID)
     @Column
     private UUID id;
 

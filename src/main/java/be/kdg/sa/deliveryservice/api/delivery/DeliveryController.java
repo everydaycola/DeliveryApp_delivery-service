@@ -38,14 +38,6 @@ public class DeliveryController {
         this.properties = properties;
     }
 
-    @PostMapping("/{id}")
-    public ResponseEntity<DeliveryDto> create(@PathVariable final UUID id) {
-        log.warn("This method is for testing purposes only and should not be used in production");
-        OrderId orderId = new OrderId(id);
-        Delivery delivery = deliveries.createNewDelivery(orderId);
-        return ResponseEntity.ok(DeliveryDto.from(delivery));
-    }
-
     @GetMapping("/unclaimed")
     public ResponseEntity <List <DeliveryDto>> findAllUnclaimed() {
         log.info("findAllUnclaimed");

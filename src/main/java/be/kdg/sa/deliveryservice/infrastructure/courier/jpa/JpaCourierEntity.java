@@ -19,7 +19,6 @@ import java.util.stream.Collectors;
 public class JpaCourierEntity {
     @Getter
     @Id
-    @GeneratedValue(strategy = GenerationType.UUID)
     @Column
     private UUID id;
 
