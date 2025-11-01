@@ -50,7 +50,7 @@ class DeliveryTest {
 
 
         // act
-        DeliveryId result = delivery.getId();
+        final var result = delivery.getId();
 
         // assert
         assertThat(result).isEqualTo(deliveryId);
@@ -62,7 +62,7 @@ class DeliveryTest {
 
 
         // act
-        OrderId result = delivery.getOrderId();
+        final var result = delivery.getOrderId();
 
         // assert
         assertThat(result).isEqualTo(orderId);
@@ -74,7 +74,7 @@ class DeliveryTest {
         delivery.claim(courierId);
 
         // act
-        CourierId result = delivery.getCourierId();
+        final var result = delivery.getCourierId();
 
         // assert
         assertThat(result).isEqualTo(courierId);
@@ -86,7 +86,7 @@ class DeliveryTest {
 
 
         // act
-        DeliveryStatus result = delivery.getStatus();
+        final var result = delivery.getStatus();
 
         // assert
         assertThat(result).isEqualTo(DeliveryStatus.UNCLAIMED);
@@ -98,7 +98,7 @@ class DeliveryTest {
         delivery = new Delivery(deliveryId, orderId, courierId, DeliveryStatus.READY_FOR_PICKUP, startTime, null, 0);
 
         // act
-        LocalDateTime result = delivery.getStartTime();
+        final var result = delivery.getStartTime();
 
         // assert
         assertThat(result).isEqualTo(startTime);
@@ -118,7 +118,7 @@ class DeliveryTest {
         );
 
         // act
-        LocalDateTime result = delivery.getEndTime();
+        final var result = delivery.getEndTime();
 
 
         // assert

@@ -43,15 +43,15 @@ class DbCourierRepositoryTest {
     @Test
     void findByIdReturnsCourierWhenFound() {
         // arrange
-        Courier courier = new Courier(courierId, courierName);
+        final var courier = new Courier(courierId, courierName);
         JpaCourierEntity jpaCourierEntity = JpaCourierEntity.fromDomain(courier, null, List.of());
 
         given(jpaCourierRepository.findById(courierId.id())).willReturn(Optional.of(jpaCourierEntity));
         // act
-        var resultOptional = sut.findById(courierId);
+        final var resultOptional = sut.findById(courierId);
         // assert
         assertThat(resultOptional).isPresent();
-        var result = resultOptional.get();
+        final var result = resultOptional.get();
         assertCompareCouriers(result, courier);
     }
 
@@ -60,7 +60,7 @@ class DbCourierRepositoryTest {
         // arrange
         given(jpaCourierRepository.findById(courierId.id())).willReturn(Optional.empty());
         // act
-        var resultOptional = sut.findById(courierId);
+        final var resultOptional = sut.findById(courierId);
         // assert
         assertThat(resultOptional).isNotPresent();
     }
@@ -68,7 +68,7 @@ class DbCourierRepositoryTest {
     @Test
     void saveShouldSaveCourierWithoutAnyDeliveries() {
         // arrange
-        Courier courier = new Courier(courierId, courierName);
+        final var courier = new Courier(courierId, courierName);
 
         ArgumentCaptor<JpaCourierEntity> entityCaptor = ArgumentCaptor.forClass(JpaCourierEntity.class);
 
@@ -85,16 +85,16 @@ class DbCourierRepositoryTest {
     @Test
     void saveShouldSaveCourierWithCurrentDelivery() {
         // arrange
-        Delivery delivery = new Delivery(deliveryId, orderId);
-        Courier courier = new Courier(courierId, courierName);
+        final var delivery = new Delivery(deliveryId, orderId);
+        final var courier = new Courier(courierId, courierName);
         delivery.claim(courierId); // not sure if needed
         courier.claim(deliveryId);
 
-        JpaDeliveryEntity jpaDeliveryEntity = JpaDeliveryEntity.fromDomain(delivery, null);
-        JpaCourierEntity jpaCourierEntity = JpaCourierEntity.fromDomain(courier, jpaDeliveryEntity, List.of());
+        final var jpaDeliveryEntity = JpaDeliveryEntity.fromDomain(delivery, null);
+        final var jpaCourierEntity = JpaCourierEntity.fromDomain(courier, jpaDeliveryEntity, List.of());
         jpaDeliveryEntity.setCourier(jpaCourierEntity);
 
-        ArgumentCaptor<JpaCourierEntity> entityCaptor = ArgumentCaptor.forClass(JpaCourierEntity.class);
+        final var entityCaptor = ArgumentCaptor.forClass(JpaCourierEntity.class);
 
         given(jpaDeliveryRepository.findById(deliveryId.id())).willReturn(Optional.of(jpaDeliveryEntity));
 
@@ -103,7 +103,7 @@ class DbCourierRepositoryTest {
 
         // assert
         verify(jpaCourierRepository).save(entityCaptor.capture());
-        Courier capturedEntity = entityCaptor.getValue().toDomain();
+        final var capturedEntity = entityCaptor.getValue().toDomain();
         assertCompareCouriers(capturedEntity, courier);
         verify(jpaDeliveryRepository).findById(deliveryId.id()); // once
     }
@@ -111,16 +111,16 @@ class DbCourierRepositoryTest {
     @Test
     void saveShouldSaveCourierWithPastDelivery() {
         // arrange
-        Delivery delivery = new Delivery(deliveryId, orderId);
-        Courier courier = new Courier(courierId, courierName);
+        final var delivery = new Delivery(deliveryId, orderId);
+        final var courier = new Courier(courierId, courierName);
         delivery.claim(courierId); // not sure if needed
         courier.addPastDelivery(deliveryId);
 
-        JpaDeliveryEntity jpaDeliveryEntity = JpaDeliveryEntity.fromDomain(delivery, null);
-        JpaCourierEntity jpaCourierEntity = JpaCourierEntity.fromDomain(courier, null, List.of(jpaDeliveryEntity) );
+        final var jpaDeliveryEntity = JpaDeliveryEntity.fromDomain(delivery, null);
+        final var jpaCourierEntity = JpaCourierEntity.fromDomain(courier, null, List.of(jpaDeliveryEntity) );
         jpaDeliveryEntity.setCourier(jpaCourierEntity);
 
-        ArgumentCaptor<JpaCourierEntity> entityCaptor = ArgumentCaptor.forClass(JpaCourierEntity.class);
+        final var entityCaptor = ArgumentCaptor.forClass(JpaCourierEntity.class);
 
         given(jpaDeliveryRepository.findById(deliveryId.id())).willReturn(Optional.of(jpaDeliveryEntity));
 
@@ -129,7 +129,7 @@ class DbCourierRepositoryTest {
 
         // assert
         verify(jpaCourierRepository).save(entityCaptor.capture());
-        Courier capturedEntity = entityCaptor.getValue().toDomain();
+        final var capturedEntity = entityCaptor.getValue().toDomain();
         assertCompareCouriers(capturedEntity, courier);
         verify(jpaDeliveryRepository).findById(deliveryId.id()); // once
     }

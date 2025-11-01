@@ -62,7 +62,7 @@ public class Delivery {
         log.info("Finishing delivery {}", this.id);
         this.status.shouldBe(DeliveryStatus.IN_DELIVERY);
         this.endTime = LocalDateTime.now();
-        double minutes = Math.ceil(Duration.between(this.startTime, this.endTime).getSeconds() / 60.0);
+        final var minutes = Math.ceil(Duration.between(this.startTime, this.endTime).getSeconds() / 60.0);
         this.payout = basePayout + (perMinutePayout * Math.clamp(minutes, minimumMinutes, maximumMinutes));
         this.status = DeliveryStatus.DELIVERED;
     }

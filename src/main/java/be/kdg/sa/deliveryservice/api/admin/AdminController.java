@@ -34,7 +34,7 @@ public class AdminController {
                 timeSpan.end()
         );
 
-        HttpHeaders headers = new HttpHeaders();
+        final var headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_PDF);
         headers.setContentDispositionFormData("summary", "courier_summary.pdf");
 

@@ -11,7 +11,7 @@ import org.springframework.context.annotation.Configuration;
 public class RabbitMQConfig {
     @Bean
     SimpleRabbitListenerContainerFactory simpleRabbitListenerContainerFactory(ConnectionFactory connectionFactory) {
-        SimpleRabbitListenerContainerFactory simpleRabbitListenerContainerFactory = new SimpleRabbitListenerContainerFactory();
+        final var simpleRabbitListenerContainerFactory = new SimpleRabbitListenerContainerFactory();
         simpleRabbitListenerContainerFactory.setConnectionFactory(connectionFactory);
         simpleRabbitListenerContainerFactory.setMessageConverter(jackson2JsonMessageConverter());
         return simpleRabbitListenerContainerFactory;

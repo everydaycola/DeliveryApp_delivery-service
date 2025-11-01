@@ -6,7 +6,6 @@ import be.kdg.sa.deliveryservice.domain.delivery.DeliveryId;
 import be.kdg.sa.deliveryservice.domain.delivery.DeliveryRepository;
 import be.kdg.sa.deliveryservice.domain.delivery.DeliveryStatus;
 import be.kdg.sa.deliveryservice.domain.order.OrderId;
-import be.kdg.sa.deliveryservice.infrastructure.courier.jpa.JpaCourierEntity;
 import be.kdg.sa.deliveryservice.infrastructure.courier.jpa.JpaCourierRepository;
 import be.kdg.sa.deliveryservice.infrastructure.delivery.jpa.JpaDeliveryEntity;
 import be.kdg.sa.deliveryservice.infrastructure.delivery.jpa.JpaDeliveryRepository;
@@ -76,11 +75,11 @@ public class DbDeliveryRepository implements DeliveryRepository {
     @Override
     public void save(Delivery delivery) {
         log.info("Saving delivery {}", delivery.getId());
-        JpaCourierEntity courier = Optional.ofNullable(delivery.getCourierId())
+        final var courier = Optional.ofNullable(delivery.getCourierId())
                 .flatMap(courierId -> jpaCourierRepository.findById(courierId.id()))
                 .orElse(null);
 
-        JpaDeliveryEntity jpaDeliveryEntity = JpaDeliveryEntity.fromDomain(delivery, courier);
+        final var jpaDeliveryEntity = JpaDeliveryEntity.fromDomain(delivery, courier);
         this.jpaDeliveryRepository.save(jpaDeliveryEntity);
 
     }

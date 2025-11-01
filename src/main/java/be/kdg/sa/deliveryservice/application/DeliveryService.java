@@ -32,7 +32,7 @@ public class DeliveryService {
 
     public void createNewDelivery(OrderId orderId) {
         log.info("Creating new delivery for order {}", orderId);
-        final Delivery delivery = new Delivery(DeliveryId.create(), orderId);
+        final var delivery = new Delivery(DeliveryId.create(), orderId);
         deliveries.save(delivery);
     }
 
@@ -44,8 +44,8 @@ public class DeliveryService {
 
     public Delivery claim(DeliveryId deliveryId, CourierId courierId) {
         log.info("Claiming delivery with id: {}", deliveryId);
-        final Delivery delivery = deliveries.findById(deliveryId).orElseThrow(deliveryId::notFound);
-        final Courier courier = couriers.findById(courierId).orElseThrow(courierId::notFound);
+        final var delivery = deliveries.findById(deliveryId).orElseThrow(deliveryId::notFound);
+        final var courier = couriers.findById(courierId).orElseThrow(courierId::notFound);
         delivery.claim(courierId);
         courier.claim(deliveryId);
         deliveries.save(delivery);
@@ -65,9 +65,9 @@ public class DeliveryService {
 
     public Courier unClaim(CourierId courierId) {
         log.info("Un-claiming courier with id: {}", courierId);
-        final Courier courier = couriers.findById(courierId).orElseThrow(courierId::notFound);
-        final DeliveryId oldDeliveryId = courier.unClaim();
-        final Delivery delivery = deliveries.findById(oldDeliveryId).orElseThrow(oldDeliveryId::notFound);
+        final var courier = couriers.findById(courierId).orElseThrow(courierId::notFound);
+        final var oldDeliveryId = courier.unClaim();
+        final var delivery = deliveries.findById(oldDeliveryId).orElseThrow(oldDeliveryId::notFound);
         delivery.authenticate(courierId);
         delivery.unClaim();
         couriers.save(courier);
@@ -77,7 +77,7 @@ public class DeliveryService {
 
     public Delivery ready(DeliveryId deliveryId, CourierId courierId) {
         log.info("Setting delivery with id: {} to ready", deliveryId);
-        final Delivery delivery = deliveries.findById(deliveryId).orElseThrow(deliveryId::notFound);
+        final var delivery = deliveries.findById(deliveryId).orElseThrow(deliveryId::notFound);
         delivery.authenticate(courierId);
         delivery.setReadyNow();
         deliveries.save(delivery);
@@ -85,13 +85,13 @@ public class DeliveryService {
     }
 
     public void ready(OrderId orderId) {
-        final Delivery delivery = deliveries.findDeliveryByOrderId(orderId).orElseThrow(orderId::notFound);
+        final var delivery = deliveries.findDeliveryByOrderId(orderId).orElseThrow(orderId::notFound);
         this.ready(delivery.getId(), delivery.getCourierId());
     }
 
     public Delivery pickup(DeliveryId deliveryId, CourierId courierId) {
         log.info("Setting delivery with id: {} to in delivery", deliveryId);
-        final Delivery delivery = deliveries.findById(deliveryId).orElseThrow(deliveryId::notFound);
+        final var delivery = deliveries.findById(deliveryId).orElseThrow(deliveryId::notFound);
         delivery.authenticate(courierId);
         delivery.pickUp();
         deliveries.save(delivery);
@@ -100,8 +100,8 @@ public class DeliveryService {
 
     public Delivery deliver(DeliveryId deliveryId, CourierId courierId) {
         log.info("Setting delivery with id: {} to delivered", deliveryId);
-        final Delivery delivery = deliveries.findById(deliveryId).orElseThrow(deliveryId::notFound);
-        final Courier courier = couriers.findById(delivery.getCourierId()).orElseThrow(delivery.getCourierId()::notFound);
+        final var delivery = deliveries.findById(deliveryId).orElseThrow(deliveryId::notFound);
+        final var courier = couriers.findById(delivery.getCourierId()).orElseThrow(delivery.getCourierId()::notFound);
         delivery.authenticate(courierId);
         delivery.finishNow(
                 domainProperties.getBasePayout(),
@@ -117,7 +117,7 @@ public class DeliveryService {
 
     public Delivery findDelivery(DeliveryId deliveryId, CourierId courierId) {
         log.info("Finding delivery with id: {} for courier with id: {}", deliveryId, courierId);
-        final Delivery delivery = deliveries.findById(deliveryId).orElseThrow(deliveryId::notFound);
+        final var delivery = deliveries.findById(deliveryId).orElseThrow(deliveryId::notFound);
         delivery.authenticate(courierId);
         return delivery;
     }

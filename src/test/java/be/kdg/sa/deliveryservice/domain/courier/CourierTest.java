@@ -40,7 +40,7 @@ class CourierTest {
         courier.claim(deliveryId);
 
         // act
-        var result = courier.getCurrentDeliveryId();
+        final var result = courier.getCurrentDeliveryId();
 
         // assert
         assertThat(result).isEqualTo(deliveryId);
@@ -51,7 +51,7 @@ class CourierTest {
         // arrange
 
         // act
-        var result = courier.getId();
+        final var result = courier.getId();
 
         // assert
         assertThat(result).isEqualTo(courierId);
@@ -63,10 +63,10 @@ class CourierTest {
         // arrange
         courier.addPastDelivery(deliveryId);
         courier.addPastDelivery(secondDeliveryId);
-        List<DeliveryId> pastDeliveries = List.of(deliveryId, secondDeliveryId);
+        final var pastDeliveries = List.of(deliveryId, secondDeliveryId);
 
         // act
-        var result = courier.getPastDeliveries();
+        final var result = courier.getPastDeliveries();
 
         // assert
         assertThat(result).isEqualTo(pastDeliveries);
@@ -159,7 +159,7 @@ class CourierTest {
         // arrange
 
         // act
-        var result = courier.getName();
+        final var result = courier.getName();
 
         // assert
         assertThat(result).isEqualTo(name);

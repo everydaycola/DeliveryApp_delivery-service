@@ -12,21 +12,21 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 public class ErrorHandling {
     @ExceptionHandler(NotFoundException.class)
     public ResponseEntity<ErrorResponse> notFoundHandler(final NotFoundException ex) {
-        ErrorResponse errorResponse = new ErrorResponse(ex.getMessage());
+        final var errorResponse = new ErrorResponse(ex.getMessage());
         log.error("NotFoundException: {}", ex.getMessage());
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(errorResponse);
     }
 
     @ExceptionHandler(IllegalStateException.class)
     public ResponseEntity<ErrorResponse> illegalStateHandler(final IllegalStateException ex) {
-        ErrorResponse errorResponse = new ErrorResponse(ex.getMessage());
+        final var errorResponse = new ErrorResponse(ex.getMessage());
         log.error("IllegalStateException: {}", ex.getMessage());
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResponse);
     }
 
     @ExceptionHandler(IllegalArgumentException.class)
     public ResponseEntity<ErrorResponse> illegalStateHandler(final IllegalArgumentException ex) {
-        ErrorResponse errorResponse = new ErrorResponse(ex.getMessage());
+        final var errorResponse = new ErrorResponse(ex.getMessage());
         log.error("IllegalArgumentException: {}", ex.getMessage());
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResponse);
     }

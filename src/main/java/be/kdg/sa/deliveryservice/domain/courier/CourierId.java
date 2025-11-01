@@ -2,7 +2,6 @@ package be.kdg.sa.deliveryservice.domain.courier;
 
 import be.kdg.sa.deliveryservice.domain.NotFoundException;
 import lombok.extern.slf4j.Slf4j;
-import org.jmolecules.ddd.annotation.Identity;
 import org.jmolecules.ddd.annotation.ValueObject;
 
 import java.util.UUID;

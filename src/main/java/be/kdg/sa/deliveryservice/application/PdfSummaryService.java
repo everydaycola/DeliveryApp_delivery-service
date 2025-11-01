@@ -1,12 +1,13 @@
 package be.kdg.sa.deliveryservice.application;
 
 import be.kdg.sa.deliveryservice.domain.courier.Courier;
-import be.kdg.sa.deliveryservice.domain.courier.CourierId;
 import be.kdg.sa.deliveryservice.domain.courier.CourierRepository;
 import be.kdg.sa.deliveryservice.domain.delivery.Delivery;
 import be.kdg.sa.deliveryservice.domain.delivery.DeliveryRepository;
 import com.itextpdf.text.*;
-import com.itextpdf.text.pdf.*;
+import com.itextpdf.text.pdf.PdfPCell;
+import com.itextpdf.text.pdf.PdfPTable;
+import com.itextpdf.text.pdf.PdfWriter;
 import com.itextpdf.text.pdf.draw.LineSeparator;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -17,7 +18,6 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.stream.Collectors;
 
 @Service
@@ -39,8 +39,8 @@ public class PdfSummaryService {
     // main method
     public byte[] generatePdfFromSummary(LocalDateTime start, LocalDateTime end) {
         log.info("Generating PDF from summary between {} and {}", start, end);
-        Map<Courier, List<Delivery>> couriersWithDeliveries = fetchCouriersWithDeliveries(start, end);
-        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+        final var couriersWithDeliveries = fetchCouriersWithDeliveries(start, end);
+        final var outputStream = new ByteArrayOutputStream();
 
         try {
             this.document = new Document(PageSize.A4);
@@ -63,11 +63,11 @@ public class PdfSummaryService {
     private Map<Courier, List<Delivery>> fetchCouriersWithDeliveries(LocalDateTime start, LocalDateTime end) {
         log.info("Finding all couriers with completed deliveries between {} and {}", start, end);
 
-        List<Delivery> completedDeliveries = deliveryRepository.findAllCompletedDeliveriesBetween(start, end);
-        Set<CourierId> courierIds = completedDeliveries.stream()
+        final var completedDeliveries = deliveryRepository.findAllCompletedDeliveriesBetween(start, end);
+        final var courierIds = completedDeliveries.stream()
                 .map(Delivery::getCourierId)
                 .collect(Collectors.toSet());
-        List<Courier> couriers = courierRepository.findAllByIdIn(courierIds);
+        final var couriers = courierRepository.findAllByIdIn(courierIds);
 
         return couriers.stream()
                 .collect(Collectors.toMap(
@@ -99,7 +99,7 @@ public class PdfSummaryService {
 
     private void addDocumentTitle() throws DocumentException {
         log.info("Adding document title to summary");
-        var title = new Paragraph("Courier Delivery Summary", getTitleFont());
+        final var title = new Paragraph("Courier Delivery Summary", getTitleFont());
         title.setAlignment(Element.ALIGN_CENTER);
         this.document.add(title);
     }
@@ -107,7 +107,7 @@ public class PdfSummaryService {
     private void addTimeRangeParagraph(LocalDateTime start, LocalDateTime end)
             throws DocumentException {
         log.info("Adding time range paragraph to summary");
-        var dateRange = new Paragraph();
+        final var dateRange = new Paragraph();
         dateRange.add(new Chunk("Period: ", getBoldFont()));
         dateRange.add(new Chunk(formatDateTime(start) + " - " + formatDateTime(end), getRegularFont()));
         dateRange.setAlignment(Element.ALIGN_CENTER);
@@ -117,7 +117,7 @@ public class PdfSummaryService {
 
     private void addTotalPayoutParagraph(double totalPayout) throws DocumentException {
         log.info("Adding total payout paragraph to summary");
-        var total = new Paragraph();
+        final var total = new Paragraph();
         total.add(new Chunk("Total Payout: ", getBoldFont()));
         total.add(new Chunk(formatCurrency(totalPayout), getRegularFont()));
         this.document.add(total);
@@ -126,7 +126,7 @@ public class PdfSummaryService {
     private void addCourierSection(Courier courier, List<Delivery> deliveries)
             throws DocumentException {
         log.info("Adding courier section to summary for courier with id {}", courier.getId());
-        var courierHeader = new Paragraph(courier.getName(), getHeadingFont());
+        final var courierHeader = new Paragraph(courier.getName(), getHeadingFont());
         this.document.add(courierHeader);
 
         addLabeledValue("ID", courier.getId().toString());
@@ -143,7 +143,7 @@ public class PdfSummaryService {
 
     private void addDeliveryTable(List<Delivery> deliveries) throws DocumentException {
         log.info("Adding delivery table to summary for courier with id {}", deliveries.getFirst().getCourierId());
-        var table = new PdfPTable(3);
+        final var table = new PdfPTable(3);
         table.setWidthPercentage(100);
         table.setWidths(new float[]{3f, 3f, 2f});
 
@@ -161,7 +161,7 @@ public class PdfSummaryService {
     // Helper methods
     private void addLabeledValue(String label, String value) throws DocumentException {
         log.info("Adding labeled value to summary for label {} and value {}", label, value);
-        var paragraph = new Paragraph();
+        final var paragraph = new Paragraph();
         paragraph.add(new Chunk(label + ": ", getBoldFont()));
         paragraph.add(new Chunk(value, getRegularFont()));
         this.document.add(paragraph);
@@ -180,19 +180,19 @@ public class PdfSummaryService {
 
     private void addTableHeader(PdfPTable table, String... headerTexts) {
         log.info("Adding table header to summary for header texts");
-        for (String headerText : headerTexts) {
+        for (var headerText : headerTexts) {
             table.addCell(createHeaderCell(headerText));
         }
     }
 
     private PdfPCell createHeaderCell(String text) {
-        var cell = createCell(text, getBoldFont());
+        final var cell = createCell(text, getBoldFont());
         cell.setBackgroundColor(BaseColor.LIGHT_GRAY);
         return cell;
     }
 
     private PdfPCell createCell(String text, Font font) {
-        var cell = new PdfPCell(new Phrase(text, font));
+        final var cell = new PdfPCell(new Phrase(text, font));
         cell.setPadding(5);
         return cell;
     }

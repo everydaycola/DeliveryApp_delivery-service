@@ -23,15 +23,15 @@ public class KeycloakRealmRoleConverter implements Converter<Jwt, Collection<Gra
         }
         
         @SuppressWarnings("unchecked")
-        final Map<String, Object> realmAccess = (Map<String, Object>) realmAccessObj;
+        final var realmAccess = (Map<String, Object>) realmAccessObj;
         
-        final Object rolesObj = realmAccess.get("roles");
+        final var rolesObj = realmAccess.get("roles");
         if (!(rolesObj instanceof List)) {
             return List.of();
         }
         
         @SuppressWarnings("unchecked")
-        final List<String> roles = (List<String>) rolesObj;
+        final var roles = (List<String>) rolesObj;
         
         if (roles.isEmpty()) {
             return List.of();

@@ -17,13 +17,12 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.Mockito.*;
-
 import java.util.List;
 import java.util.Optional;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.BDDMockito.given;
+import static org.mockito.Mockito.verify;
 
 @ExtendWith(MockitoExtension.class)
 class DbDeliveryRepositoryTest {
@@ -51,15 +50,15 @@ class DbDeliveryRepositoryTest {
     @Test
     void findAllByStatusReturnsAllDeliveriesWithStatus() {
         // arrange
-        Delivery delivery = new Delivery(deliveryId, orderId);
-        Delivery delivery2 = new Delivery(deliveryId2, orderId2);
-        JpaDeliveryEntity jpaDeliveryEntity = JpaDeliveryEntity.fromDomain(delivery, null);
-        JpaDeliveryEntity jpaDeliveryEntity2 = JpaDeliveryEntity.fromDomain(delivery2, null);
+        final var delivery = new Delivery(deliveryId, orderId);
+        final var delivery2 = new Delivery(deliveryId2, orderId2);
+        final var jpaDeliveryEntity = JpaDeliveryEntity.fromDomain(delivery, null);
+        final var jpaDeliveryEntity2 = JpaDeliveryEntity.fromDomain(delivery2, null);
 
         given(jpaDeliveryRepository.findAllByStatus("UNCLAIMED")).willReturn(Optional.of(List.of(jpaDeliveryEntity, jpaDeliveryEntity2)));
 
         // act
-        var result = sut.findAllByStatus(DeliveryStatus.UNCLAIMED);
+        final var result = sut.findAllByStatus(DeliveryStatus.UNCLAIMED);
 
         // assert
         assertThat(result).hasSize(2);
@@ -74,7 +73,7 @@ class DbDeliveryRepositoryTest {
         given(jpaDeliveryRepository.findAllByStatus("CLAIMED")).willReturn(Optional.empty());
 
         // act
-        var result = sut.findAllByStatus(DeliveryStatus.CLAIMED);
+        final var result = sut.findAllByStatus(DeliveryStatus.CLAIMED);
 
         // assert
         assertThat(result).isEmpty();
@@ -84,12 +83,12 @@ class DbDeliveryRepositoryTest {
     @Test
     void findByIdReturnsDeliveryWhenFound() {
         // arrange
-        Delivery delivery = new Delivery(deliveryId, orderId);
-        JpaDeliveryEntity jpaDeliveryEntity = JpaDeliveryEntity.fromDomain(delivery, null);
+        final var delivery = new Delivery(deliveryId, orderId);
+        final var jpaDeliveryEntity = JpaDeliveryEntity.fromDomain(delivery, null);
 
         given(jpaDeliveryRepository.findById(deliveryId.id())).willReturn(Optional.of(jpaDeliveryEntity));
         // act
-        var result = sut.findById(deliveryId);
+        final var result = sut.findById(deliveryId);
         // assert
         assertThat(result).isPresent();
         assertCompareDeliveries(result.get(), delivery);
@@ -100,7 +99,7 @@ class DbDeliveryRepositoryTest {
         // arrange
         given(jpaDeliveryRepository.findById(deliveryId.id())).willReturn(Optional.empty());
         // act
-        var result = sut.findById(deliveryId);
+        final var result = sut.findById(deliveryId);
         // assert
         assertThat(result).isNotPresent();
     }
@@ -108,9 +107,9 @@ class DbDeliveryRepositoryTest {
     @Test
     void findCompletedDeliveriesForReturnsCompletedDeliveriesForCourier() {
         // arrange
-        Courier courier = new Courier(courierId, "John");
-        Delivery delivery = new Delivery(deliveryId, orderId);
-        Delivery delivery2 = new Delivery(deliveryId2, orderId2);
+        final var courier = new Courier(courierId, "John");
+        final var delivery = new Delivery(deliveryId, orderId);
+        final var delivery2 = new Delivery(deliveryId2, orderId2);
         delivery.claim(courierId);
         delivery2.claim(courierId);
         delivery.setReadyNow();
@@ -119,16 +118,16 @@ class DbDeliveryRepositoryTest {
         delivery2.pickUp();
         delivery.finishNow(basePayout, perMinutePayout, minimumMinutes, maximumMinutes);
         delivery2.finishNow(basePayout, perMinutePayout, minimumMinutes, maximumMinutes);
-        JpaDeliveryEntity jpaDeliveryEntity = JpaDeliveryEntity.fromDomain(delivery, null);
-        JpaDeliveryEntity jpaDeliveryEntity2 = JpaDeliveryEntity.fromDomain(delivery2, null);
-        JpaCourierEntity jpaCourierEntity = JpaCourierEntity.fromDomain(courier, null, List.of(jpaDeliveryEntity, jpaDeliveryEntity2));
+        final var jpaDeliveryEntity = JpaDeliveryEntity.fromDomain(delivery, null);
+        final var jpaDeliveryEntity2 = JpaDeliveryEntity.fromDomain(delivery2, null);
+        final var jpaCourierEntity = JpaCourierEntity.fromDomain(courier, null, List.of(jpaDeliveryEntity, jpaDeliveryEntity2));
         jpaDeliveryEntity.setCourier(jpaCourierEntity);
         jpaDeliveryEntity2.setCourier(jpaCourierEntity);
 
         given(jpaDeliveryRepository.findAllByCourierIdAndStatus(courierId.id(), "DELIVERED")).willReturn(Optional.of(List.of(jpaDeliveryEntity, jpaDeliveryEntity2)));
 
         // act
-        var result = sut.findCompletedDeliveriesFor(courierId);
+        final var result = sut.findCompletedDeliveriesFor(courierId);
 
         // assert
         assertThat(result).hasSize(2);
@@ -143,7 +142,7 @@ class DbDeliveryRepositoryTest {
         given(jpaDeliveryRepository.findAllByCourierIdAndStatus(courierId.id(), "DELIVERED")).willReturn(Optional.empty());
 
         // act
-        var result = sut.findCompletedDeliveriesFor(courierId);
+        final var result = sut.findCompletedDeliveriesFor(courierId);
 
         // assert
         assertThat(result).isEmpty();
@@ -156,7 +155,7 @@ class DbDeliveryRepositoryTest {
         given(jpaDeliveryRepository.findAllByCourierIdAndStatus(courierId.id(), "DELIVERED")).willReturn(Optional.of(List.of()));
 
         // act
-        var result = sut.findCompletedDeliveriesFor(courierId);
+        final var result = sut.findCompletedDeliveriesFor(courierId);
 
         // assert
         assertThat(result).isEmpty();
@@ -166,9 +165,9 @@ class DbDeliveryRepositoryTest {
     @Test
     void saveShouldSaveDeliveryWithoutCourier() {
         // arrange
-        Delivery delivery = new Delivery(deliveryId, orderId);
+        final var delivery = new Delivery(deliveryId, orderId);
 
-        ArgumentCaptor<JpaDeliveryEntity> entityCaptor = ArgumentCaptor.forClass(JpaDeliveryEntity.class);
+        final var entityCaptor = ArgumentCaptor.forClass(JpaDeliveryEntity.class);
 
         // act
         sut.save(delivery);
@@ -176,31 +175,31 @@ class DbDeliveryRepositoryTest {
         // assert
 
         verify(jpaDeliveryRepository).save(entityCaptor.capture());
-        Delivery capturedEntity = entityCaptor.getValue().toDomain();
+        final var capturedEntity = entityCaptor.getValue().toDomain();
         assertCompareDeliveries(capturedEntity, delivery);
     }
 
     @Test
     void saveShouldSaveDeliveryWithCourier() {
         // arrange
-        Delivery delivery = new Delivery(deliveryId, orderId);
+        final var delivery = new Delivery(deliveryId, orderId);
         delivery.claim(courierId);
-        Courier courier = new Courier(courierId, "John");
+        final var courier = new Courier(courierId, "John");
 
-        JpaDeliveryEntity jpaDeliveryEntity = JpaDeliveryEntity.fromDomain(delivery, null);
-        JpaCourierEntity jpaCourierEntity = JpaCourierEntity.fromDomain(courier, jpaDeliveryEntity, null);
+        final var jpaDeliveryEntity = JpaDeliveryEntity.fromDomain(delivery, null);
+        final var jpaCourierEntity = JpaCourierEntity.fromDomain(courier, jpaDeliveryEntity, null);
 //        jpaDeliveryEntity.setCourier(jpaCourierEntity); // not needed in this test
 
         given(jpaCourierRepository.findById(courierId.id())).willReturn(Optional.of(jpaCourierEntity));
 
-        ArgumentCaptor<JpaDeliveryEntity> entityCaptor = ArgumentCaptor.forClass(JpaDeliveryEntity.class);
+        final var entityCaptor = ArgumentCaptor.forClass(JpaDeliveryEntity.class);
 
         // act
         sut.save(delivery);
 
         // assert
         verify(jpaDeliveryRepository).save(entityCaptor.capture());
-        Delivery capturedEntity = entityCaptor.getValue().toDomain();
+        final var capturedEntity = entityCaptor.getValue().toDomain();
         assertCompareDeliveries(capturedEntity, delivery);
     }
 
