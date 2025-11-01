@@ -2,9 +2,11 @@ package be.kdg.sa.deliveryservice.domain.delivery;
 
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
+import org.jmolecules.ddd.annotation.ValueObject;
 
 @Getter
 @Slf4j
+@ValueObject
 public enum DeliveryStatus {
     UNCLAIMED(0),
     CLAIMED(1),

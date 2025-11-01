@@ -2,10 +2,12 @@ package be.kdg.sa.deliveryservice.api.courier.dtos;
 
 import be.kdg.sa.deliveryservice.domain.courier.Courier;
 import lombok.extern.slf4j.Slf4j;
+import org.jmolecules.ddd.annotation.ValueObject;
 
 import java.util.UUID;
 
 @Slf4j
+@ValueObject
 public record CourierDto(UUID id,
                          String name,
                          UUID deliveryId){

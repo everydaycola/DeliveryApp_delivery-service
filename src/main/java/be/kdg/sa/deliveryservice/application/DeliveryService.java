@@ -30,11 +30,10 @@ public class DeliveryService {
         this.domainProperties = domainProperties;
     }
 
-    public Delivery createNewDelivery(OrderId orderId) {
+    public void createNewDelivery(OrderId orderId) {
         log.info("Creating new delivery for order {}", orderId);
         final Delivery delivery = new Delivery(DeliveryId.create(), orderId);
         deliveries.save(delivery);
-        return delivery;
     }
 
     public Courier findCourierById(final CourierId courierId) {

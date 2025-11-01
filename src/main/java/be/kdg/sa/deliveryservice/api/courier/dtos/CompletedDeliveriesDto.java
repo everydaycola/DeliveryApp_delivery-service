@@ -2,11 +2,13 @@ package be.kdg.sa.deliveryservice.api.courier.dtos;
 
 import be.kdg.sa.deliveryservice.domain.delivery.Delivery;
 import lombok.extern.slf4j.Slf4j;
+import org.jmolecules.ddd.annotation.ValueObject;
 
 import java.time.LocalDateTime;
 import java.util.List;
 
 @Slf4j
+@ValueObject
 public record CompletedDeliveriesDto(
         double totalPayout,
         List<CompletedDeliveryDto> completedDeliveries

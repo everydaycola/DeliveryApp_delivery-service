@@ -38,6 +38,7 @@ public class PdfSummaryService {
 
     // main method
     public byte[] generatePdfFromSummary(LocalDateTime start, LocalDateTime end) {
+        log.info("Generating PDF from summary between {} and {}", start, end);
         Map<Courier, List<Delivery>> couriersWithDeliveries = fetchCouriersWithDeliveries(start, end);
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
 
@@ -80,6 +81,7 @@ public class PdfSummaryService {
     // PDF Document creation methods
     private void addPdfHeader(LocalDateTime start, LocalDateTime end, double totalPayout)
             throws DocumentException {
+        log.info("Adding PDF header to summary");
         addDocumentTitle();
         addTimeRangeParagraph(start, end);
         addTotalPayoutParagraph(totalPayout);
@@ -88,6 +90,7 @@ public class PdfSummaryService {
 
     private void addCourierSections(Map<Courier, List<Delivery>> couriersWithDeliveries)
             throws DocumentException {
+        log.info("Adding courier sections to summary");
         for (var entry : couriersWithDeliveries.entrySet()) {
             addCourierSection(entry.getKey(), entry.getValue());
             addSectionSeparator();
@@ -95,6 +98,7 @@ public class PdfSummaryService {
     }
 
     private void addDocumentTitle() throws DocumentException {
+        log.info("Adding document title to summary");
         var title = new Paragraph("Courier Delivery Summary", getTitleFont());
         title.setAlignment(Element.ALIGN_CENTER);
         this.document.add(title);
@@ -102,6 +106,7 @@ public class PdfSummaryService {
 
     private void addTimeRangeParagraph(LocalDateTime start, LocalDateTime end)
             throws DocumentException {
+        log.info("Adding time range paragraph to summary");
         var dateRange = new Paragraph();
         dateRange.add(new Chunk("Period: ", getBoldFont()));
         dateRange.add(new Chunk(formatDateTime(start) + " - " + formatDateTime(end), getRegularFont()));
@@ -111,6 +116,7 @@ public class PdfSummaryService {
     }
 
     private void addTotalPayoutParagraph(double totalPayout) throws DocumentException {
+        log.info("Adding total payout paragraph to summary");
         var total = new Paragraph();
         total.add(new Chunk("Total Payout: ", getBoldFont()));
         total.add(new Chunk(formatCurrency(totalPayout), getRegularFont()));
@@ -119,6 +125,7 @@ public class PdfSummaryService {
 
     private void addCourierSection(Courier courier, List<Delivery> deliveries)
             throws DocumentException {
+        log.info("Adding courier section to summary for courier with id {}", courier.getId());
         var courierHeader = new Paragraph(courier.getName(), getHeadingFont());
         this.document.add(courierHeader);
 
@@ -135,6 +142,7 @@ public class PdfSummaryService {
     }
 
     private void addDeliveryTable(List<Delivery> deliveries) throws DocumentException {
+        log.info("Adding delivery table to summary for courier with id {}", deliveries.getFirst().getCourierId());
         var table = new PdfPTable(3);
         table.setWidthPercentage(100);
         table.setWidths(new float[]{3f, 3f, 2f});
@@ -152,6 +160,7 @@ public class PdfSummaryService {
 
     // Helper methods
     private void addLabeledValue(String label, String value) throws DocumentException {
+        log.info("Adding labeled value to summary for label {} and value {}", label, value);
         var paragraph = new Paragraph();
         paragraph.add(new Chunk(label + ": ", getBoldFont()));
         paragraph.add(new Chunk(value, getRegularFont()));
@@ -163,12 +172,14 @@ public class PdfSummaryService {
     }
 
     private void addSectionSeparator() throws DocumentException {
+        log.info("Adding section separator to summary");
         addSpacer();
         document.add(new LineSeparator());
         addSpacer();
     }
 
     private void addTableHeader(PdfPTable table, String... headerTexts) {
+        log.info("Adding table header to summary for header texts");
         for (String headerText : headerTexts) {
             table.addCell(createHeaderCell(headerText));
         }
@@ -206,6 +217,7 @@ public class PdfSummaryService {
     // Calculation and formatting methods
 
     private double calculateTotalPayout(Map<Courier, List<Delivery>> couriersWithDeliveries) {
+        log.info("Calculating total payout for couriers with deliveries {}", couriersWithDeliveries);
         return couriersWithDeliveries.values().stream()
                 .flatMap(List::stream)
                 .mapToDouble(Delivery::getPayout)
@@ -213,6 +225,7 @@ public class PdfSummaryService {
     }
 
     private double calculateCourierPayout(List<Delivery> deliveries) {
+        log.info("Calculating payout for courier with deliveries {}", deliveries);
         return deliveries.stream()
                 .mapToDouble(Delivery::getPayout)
                 .sum();

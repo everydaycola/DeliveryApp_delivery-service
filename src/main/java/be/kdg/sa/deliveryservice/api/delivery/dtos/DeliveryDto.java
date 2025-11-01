@@ -2,11 +2,13 @@ package be.kdg.sa.deliveryservice.api.delivery.dtos;
 
 import be.kdg.sa.deliveryservice.domain.delivery.Delivery;
 import lombok.extern.slf4j.Slf4j;
+import org.jmolecules.ddd.annotation.ValueObject;
 
 import java.time.LocalDateTime;
 import java.util.UUID;
 
 @Slf4j
+@ValueObject
 public record DeliveryDto(
         UUID id,
         UUID orderId,
