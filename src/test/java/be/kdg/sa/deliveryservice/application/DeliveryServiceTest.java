@@ -10,8 +10,10 @@ import be.kdg.sa.deliveryservice.domain.delivery.DeliveryId;
 import be.kdg.sa.deliveryservice.domain.delivery.DeliveryRepository;
 import be.kdg.sa.deliveryservice.domain.delivery.DeliveryStatus;
 import be.kdg.sa.deliveryservice.domain.order.OrderId;
+import be.kdg.sa.deliveryservice.infrastructure.delivery.jpa.JpaDeliveryEntity;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -20,6 +22,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+import static org.assertj.core.api.Assertions.anyOf;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.BDDMockito.given;
@@ -47,6 +50,21 @@ class DeliveryServiceTest {
 
     @InjectMocks
     private DeliveryService sut;
+
+    @Test
+    void createDeliveryShouldSaveCreatedDelivery() {
+        // arrange
+        final var entityCaptor = ArgumentCaptor.forClass(Delivery.class);
+
+        // act
+        sut.createNewDelivery(orderId);
+
+        // assert
+        verify(deliveryRepository).save(entityCaptor.capture());
+        final var delivery = entityCaptor.getValue();
+        assertThat(delivery.getOrderId()).isEqualTo(orderId);
+        assertThat(delivery.getStatus()).isEqualTo(DeliveryStatus.UNCLAIMED);
+    }
 
     @Test
     void findCourierByIdShouldReturnCourier() {
@@ -252,6 +270,8 @@ class DeliveryServiceTest {
         assertThat(result.getStartTime()).isNotNull();
     }
 
+
+
     @Test
     void readyShouldThrowExceptionWhenDeliveryNotFound() {
         // arrange
@@ -263,6 +283,36 @@ class DeliveryServiceTest {
         // act & assert
         assertThrows(NotFoundException.class,
                 () -> sut.ready(deliveryId, courierId));
+
+        verify(deliveryRepository, never()).save(delivery);
+    }
+
+    @Test
+    void readyWithOrderIdShouldSetDeliveryToReadyAndSaveDelivery() {
+        // arrange
+        final var delivery = new Delivery(deliveryId, orderId);
+        delivery.claim(courierId);
+
+        given(deliveryRepository.findDeliveryByOrderId(orderId)).willReturn(Optional.of(delivery));
+
+        // act
+        sut.ready(orderId);
+
+        // assert
+        verify(deliveryRepository).save(delivery);
+    }
+
+    @Test
+    void readyWithOrderIdShouldThrowExceptionWhenDeliveryNotFound() {
+        // arrange
+        final var delivery = new Delivery(deliveryId, orderId);
+        delivery.claim(courierId);
+
+        given(deliveryRepository.findDeliveryByOrderId(orderId)).willReturn(Optional.empty());
+
+        // act & assert
+        assertThrows(NotFoundException.class,
+                () -> sut.ready(orderId));
 
         verify(deliveryRepository, never()).save(delivery);
     }

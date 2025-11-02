@@ -64,8 +64,7 @@ public class DbDeliveryRepository implements DeliveryRepository {
     @Override
     public List<Delivery> findAllCompletedDeliveriesBetween(LocalDateTime start, LocalDateTime end) {
         return this.jpaDeliveryRepository.findAllByStatusAndStartTimeIsAfterAndEndTimeIsBefore(
-                DeliveryStatus.DELIVERED.toString(),
-                start, end)
+                DeliveryStatus.DELIVERED.toString(), start, end)
                 .orElse(Collections.emptyList())
                 .stream()
                 .map(JpaDeliveryEntity::toDomain)

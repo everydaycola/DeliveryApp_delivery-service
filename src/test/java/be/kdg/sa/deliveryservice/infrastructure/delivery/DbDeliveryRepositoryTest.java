@@ -17,6 +17,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -38,6 +39,9 @@ class DbDeliveryRepositoryTest {
     private static final DeliveryId deliveryId = DeliveryId.create();
     private static final DeliveryId deliveryId2 = DeliveryId.create();
 
+    private static final LocalDateTime startTime = LocalDateTime.now();
+    private static final LocalDateTime endTime = startTime.plusMinutes(10);
+
     @Mock
     private JpaDeliveryRepository jpaDeliveryRepository;
 
@@ -46,6 +50,29 @@ class DbDeliveryRepositoryTest {
 
     @InjectMocks
     private DbDeliveryRepository sut;
+
+    @Test
+    void findDeliveryByOrderIdShouldReturnFoundAsOptional() {
+        // arrange
+        final var delivery = new Delivery(deliveryId, orderId);
+        final var jpaDeliveryEntity = JpaDeliveryEntity.fromDomain(delivery, null);
+        given(jpaDeliveryRepository.findByOrderId(orderId.id())).willReturn(Optional.of(jpaDeliveryEntity));
+        // act
+        final var result = sut.findDeliveryByOrderId(orderId);
+        // assert
+        assertThat(result).isPresent();
+        assertCompareDeliveries(result.get(), delivery);
+    }
+
+    @Test
+    void findDeliveryByOrderIdShouldReturnEmptyOptionalWhenNotFound() {
+        // arrange
+        given(jpaDeliveryRepository.findByOrderId(orderId.id())).willReturn(Optional.empty());
+        // act
+        final var result = sut.findDeliveryByOrderId(orderId);
+        // assert
+        assertThat(result).isEmpty();
+    }
 
     @Test
     void findAllByStatusReturnsAllDeliveriesWithStatus() {
@@ -160,6 +187,56 @@ class DbDeliveryRepositoryTest {
         // assert
         assertThat(result).isEmpty();
         verify(jpaDeliveryRepository).findAllByCourierIdAndStatus(courierId.id(), "DELIVERED");
+    }
+
+    @Test
+    void findAllCompletedDeliveriesBetweenShouldReturnDeliveriesBetweenInterval() {
+        // arrange
+        final var courier = new Courier(courierId, "John");
+        final var delivery = new Delivery(deliveryId, orderId, courierId, DeliveryStatus.DELIVERED, startTime, endTime, 3.5);
+        final var delivery2 = new Delivery(deliveryId2, orderId2, courierId, DeliveryStatus.DELIVERED, startTime.plusMinutes(30), endTime.plusMinutes(30), 3.5);
+        final var jpaDeliveryEntity = JpaDeliveryEntity.fromDomain(delivery, null);
+        final var jpaDeliveryEntity2 = JpaDeliveryEntity.fromDomain(delivery2, null);
+        final var jpaCourierEntity = JpaCourierEntity.fromDomain(courier, null, List.of(jpaDeliveryEntity, jpaDeliveryEntity2));
+        jpaDeliveryEntity.setCourier(jpaCourierEntity);
+        jpaDeliveryEntity2.setCourier(jpaCourierEntity);
+
+        given(jpaDeliveryRepository.findAllByStatusAndStartTimeIsAfterAndEndTimeIsBefore("DELIVERED", startTime.minusDays(20), endTime.plusDays(20))).willReturn(Optional.of(List.of(jpaDeliveryEntity, jpaDeliveryEntity2)));
+
+        // act
+        final var result = sut.findAllCompletedDeliveriesBetween(startTime.minusDays(20), endTime.plusDays(20));
+
+        // assert
+        assertThat(result).hasSize(2);
+        assertCompareDeliveries(result.get(0), delivery);
+        assertCompareDeliveries(result.get(1), delivery2);
+
+    }
+
+    @Test
+    void findAllCompletedDeliveriesBetweenShouldReturnDeliveriesBetweenIntervalEvenWhenNoDeliveries() {
+        // arrange
+        given(jpaDeliveryRepository.findAllByStatusAndStartTimeIsAfterAndEndTimeIsBefore("DELIVERED", startTime.minusDays(10), endTime.plusDays(10))).willReturn(Optional.of(List.of()));
+
+        // act
+        final var result = sut.findAllCompletedDeliveriesBetween(startTime.minusDays(10), endTime.plusDays(10));
+
+        // assert
+        assertThat(result).isEmpty();
+
+    }
+
+    @Test
+    void findAllCompletedDeliveriesBetweenShouldReturnDeliveriesBetweenIntervalEvenWhenNoResponse() {
+        // arrange
+        given(jpaDeliveryRepository.findAllByStatusAndStartTimeIsAfterAndEndTimeIsBefore("DELIVERED", startTime.minusDays(10), endTime.plusDays(10))).willReturn(Optional.empty());
+
+        // act
+        final var result = sut.findAllCompletedDeliveriesBetween(startTime.minusDays(10), endTime.plusDays(10));
+
+        // assert
+        assertThat(result).isEmpty();
+
     }
 
     @Test

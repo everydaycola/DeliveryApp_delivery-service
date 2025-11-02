@@ -18,6 +18,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.BDDMockito.given;
@@ -30,6 +31,8 @@ class DbCourierRepositoryTest {
     private static final CourierId courierId = CourierId.create();
     private static final String courierName = "John";
     private static final DeliveryId deliveryId = DeliveryId.create();
+    private static final CourierId courierId2 = CourierId.create();
+    private static final String courierName2 = "Johnny";
 
     @Mock
     private JpaDeliveryRepository jpaDeliveryRepository;
@@ -63,6 +66,40 @@ class DbCourierRepositoryTest {
         final var resultOptional = sut.findById(courierId);
         // assert
         assertThat(resultOptional).isNotPresent();
+    }
+
+    @Test
+    void findAllByIdInShouldReturnMultipleCouriers() {
+        // arrange
+        final var idSetIds = Set.of(courierId, courierId2);
+        final var courier = new Courier(courierId, courierName);
+        final var courier2 = new Courier(courierId2, courierName2);
+        final var jpaCourierEntity = JpaCourierEntity.fromDomain(courier, null, List.of());
+        final var jpaCourierEntity2 = JpaCourierEntity.fromDomain(courier2, null, List.of());
+        // we can't garantuee order
+        given(jpaCourierRepository.findAllByIdIn(argThat(list ->
+                list.size() == 2 &&
+                        list.contains(courierId.id()) &&
+                        list.contains(courierId2.id())
+        ))).willReturn(List.of(jpaCourierEntity, jpaCourierEntity2));
+
+        // act
+        final var result = sut.findAllByIdIn(idSetIds);
+        // assert
+        assertThat(result).hasSize(2);
+        assertCompareCouriers(result.get(0), courier);
+        assertCompareCouriers(result.get(1), courier2);
+    }
+
+    @Test
+    void findAllByIdInShouldReturnNothingIfGivenNothing() {
+        // arrange
+        given(jpaCourierRepository.findAllByIdIn(List.of()))
+                .willReturn(List.of());
+        // act
+        final var result = sut.findAllByIdIn(Set.of());
+        // assert
+        assertThat(result).isEmpty();
     }
 
     @Test

@@ -132,13 +132,9 @@ public class PdfSummaryService {
         addLabeledValue("ID", courier.getId().toString());
         addLabeledValue("Total Payout", formatCurrency(calculateCourierPayout(deliveries)));
 
-        if (!deliveries.isEmpty()) {
-            this.document.add(new Paragraph("Completed Deliveries:", getBoldFont()));
-            addSpacer();
-            addDeliveryTable(deliveries);
-        } else {
-            this.document.add(new Paragraph("No completed deliveries for this period.", getRegularFont()));
-        }
+        this.document.add(new Paragraph("Completed Deliveries:", getBoldFont()));
+        addSpacer();
+        addDeliveryTable(deliveries);
     }
 
     private void addDeliveryTable(List<Delivery> deliveries) throws DocumentException {

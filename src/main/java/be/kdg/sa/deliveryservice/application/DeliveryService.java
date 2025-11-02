@@ -86,7 +86,9 @@ public class DeliveryService {
 
     public void ready(OrderId orderId) {
         final var delivery = deliveries.findDeliveryByOrderId(orderId).orElseThrow(orderId::notFound);
-        this.ready(delivery.getId(), delivery.getCourierId());
+        delivery.authenticate(delivery.getCourierId());
+        delivery.setReadyNow();
+        deliveries.save(delivery);
     }
 
     public Delivery pickup(DeliveryId deliveryId, CourierId courierId) {
