@@ -19,21 +19,21 @@ public class RabbitMQTopology {
 
     @Bean
     Queue orderAcceptedQueue() {
-        return QueueBuilder.nonDurable(properties.getOrderAcceptedQueue()).build();
+        return QueueBuilder.nonDurable(properties.getOrderAcceptedDeliveryQueue()).build();
     }
 
     @Bean
     Queue orderReadyQueue() {
-        return QueueBuilder.nonDurable(properties.getOrderReadyQueue()).build();
+        return QueueBuilder.nonDurable(properties.getOrderReadyDeliveryQueue()).build();
     }
 
     @Bean
-    Binding orderAcceptedBinding(TopicExchange kdgExchange) {
-        return BindingBuilder.bind(orderAcceptedQueue()).to(kdgExchange).with(properties.getOrderAcceptedBinding());
+    Binding orderAcceptedDeliveryBinding() {
+        return BindingBuilder.bind(orderAcceptedQueue()).to(kdgExchange()).with(properties.getOrderAcceptedDeliveryBinding());
     }
 
     @Bean
     Binding orderReadyBinding(){
-        return BindingBuilder.bind(orderReadyQueue()).to(kdgExchange()).with(properties.getOrderReadyBinding());
+        return BindingBuilder.bind(orderReadyQueue()).to(kdgExchange()).with(properties.getOrderReadyDeliveryBinding());
     }
 }

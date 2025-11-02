@@ -17,17 +17,23 @@ public class OrderMessageHandler {
         this.deliveryService = deliveryService;
     }
 
-    @RabbitListener(queues = "${spring.rabbitmq.kdg.order-accepted-queue}")
+    @RabbitListener(queues = "${spring.rabbitmq.kdg.order-accepted-delivery-queue}")
     void onOrderAcceptedMessageReceived(OrderAcceptedMessage message) {
         log.info("Order Accepted Message Received: Order={}", message.orderDto().id());
-        final var orderId = new OrderId(message.orderDto().id());
-        deliveryService.createNewDelivery(orderId);
+        try {
+            deliveryService.createNewDelivery(new OrderId(message.orderDto().id()));
+        } catch (IllegalArgumentException e) {
+            log.error("Order with id {} already exists", message.orderDto().id());
+        }
     }
 
-    @RabbitListener(queues = "${spring.rabbitmq.kdg.order-ready-queue}")
+    @RabbitListener(queues = "${spring.rabbitmq.kdg.order-ready-delivery-queue}")
     void onOrderReadyMessageReceived(OrderReadyMessage message) {
         log.info("Order Ready Message Received: Order={}", message.orderDto().id());
-        final var orderId = new OrderId(message.orderDto().id());
-        deliveryService.ready(orderId);
+        try {
+            deliveryService.ready(new OrderId(message.orderDto().id()));
+        } catch (IllegalArgumentException e) {
+            log.error("Order with id {} not found", message.orderDto().id());
+        }
     }
 }

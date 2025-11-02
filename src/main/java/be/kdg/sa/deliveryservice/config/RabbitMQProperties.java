@@ -8,10 +8,10 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 @ConfigurationProperties(prefix = "spring.rabbitmq.kdg")
 public class RabbitMQProperties {
     private final String exchangeName;
-    private final String orderAcceptedQueue;
-    private final String orderAcceptedBinding;
-    private final String orderReadyQueue;
-    private final String orderReadyBinding;
+    private final String orderAcceptedDeliveryQueue;
+    private final String orderAcceptedDeliveryBinding;
+    private final String orderReadyDeliveryQueue;
+    private final String orderReadyDeliveryBinding;
     private final String orderPickedUpBinding;
     private final String orderDeliveredBinding;
 }
