@@ -60,32 +60,32 @@ Authorization: Bearer {{access_token_courier1}}
 GET http://localhost:8082/api/couriers/completed
 Authorization: Bearer {{access_token_courier2}}
 
-### POST request to claim delivery as courier
-POST http://localhost:8082/api/deliveries/{{delivery5}}/claim
+### PATCH request to claim delivery as courier
+PATCH http://localhost:8082/api/deliveries/{{delivery5}}/claim
 Authorization: Bearer {{access_token_courier1}}
 
-### POST request to claim delivery as courier (Use it to try and claim a delivery when you already have one)
-POST http://localhost:8082/api/deliveries/{{delivery6}}/claim
+### PATCH request to claim delivery as courier (Use it to try and claim a delivery when you already have one)
+PATCH http://localhost:8082/api/deliveries/{{delivery6}}/claim
 Authorization: Bearer {{access_token_courier1}}
 
-### POST request to claim an already claimed delivery
-POST http://localhost:8082/api/deliveries/{{delivery1}}/claim
+### PATCH request to claim an already claimed delivery
+PATCH http://localhost:8082/api/deliveries/{{delivery1}}/claim
 Authorization: Bearer {{access_token_courier1}}
 
-### POST request to unclaim your claimed delivery
-POST http://localhost:8082/api/couriers/unclaim
+### PATCH request to unclaim your claimed delivery
+PATCH http://localhost:8082/api/couriers/unclaim
 Authorization: Bearer {{access_token_courier1}}
 
-### POST request set delivery ready for pickup (Should only be preformed via order by restaurant)
-POST http://localhost:8082/api/deliveries/{{delivery5}}/ready
+### PATCH request set delivery ready for pickup (Should only be preformed via order by restaurant)
+PATCH http://localhost:8082/api/deliveries/{{delivery5}}/ready
 Authorization: Bearer {{access_token_courier1}}
 
-### POST request set delivery as picked up and on the way (IN_DELIVERY)
-POST http://localhost:8082/api/deliveries/{{delivery5}}/pickup
+### PATCH request set delivery as picked up and on the way (IN_DELIVERY)
+PATCH http://localhost:8082/api/deliveries/{{delivery5}}/pickup
 Authorization: Bearer {{access_token_courier1}}
 
-### POST request set delivery as delivered and calculate the payout.
-POST http://localhost:8082/api/deliveries/{{delivery5}}/deliver
+### PATCH request set delivery as delivered and calculate the payout.
+PATCH http://localhost:8082/api/deliveries/{{delivery5}}/deliver
 Authorization: Bearer {{access_token_courier1}}
 
 ### Get access token for admin

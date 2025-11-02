@@ -57,7 +57,7 @@ public class DeliveryController {
         return ResponseEntity.ok(DeliveryDto.from(deliveries.findDelivery(deliveryId, courierId)));
     }
 
-    @PostMapping("/{deliveryId}/claim")
+    @PatchMapping("/{deliveryId}/claim")
     public ResponseEntity<DeliveryDto> claim(@PathVariable("deliveryId") final UUID deliveryUUID,
                                              @AuthenticationPrincipal Jwt token) {
         log.info("claim: {}", deliveryUUID);
@@ -69,7 +69,7 @@ public class DeliveryController {
     }
 
     // this method should not exist and needs to be moved to message controller to be spoken to by restaurant
-    @PostMapping("/{id}/ready")
+    @PatchMapping("/{id}/ready")
     public ResponseEntity<DeliveryDto> setReady(@PathVariable final UUID id, @AuthenticationPrincipal Jwt token) {
         log.info("setReady: {}", id);
         log.warn("This method should not exist and needs to be moved to message controller to be spoken to by restaurant");
@@ -80,7 +80,7 @@ public class DeliveryController {
         return ResponseEntity.ok(dto);
     }
 
-    @PostMapping("/{id}/pickup")
+    @PatchMapping("/{id}/pickup")
     public ResponseEntity<DeliveryDto> setInDelivery(@PathVariable final UUID id, @AuthenticationPrincipal Jwt token) {
         log.info("setInDelivery: {}", id);
         final var courierId = new CourierId(UUID.fromString(token.getClaimAsString(TOKEN_ID_NAME)));
@@ -95,7 +95,7 @@ public class DeliveryController {
         return ResponseEntity.ok(dto);
     }
 
-    @PostMapping("/{id}/deliver")
+    @PatchMapping("/{id}/deliver")
     public ResponseEntity<DeliveryDto> setDelivered(@PathVariable final UUID id, @AuthenticationPrincipal Jwt token) {
         log.info("setDelivered: {}", id);
         final var courierId = new CourierId(UUID.fromString(token.getClaimAsString(TOKEN_ID_NAME)));
